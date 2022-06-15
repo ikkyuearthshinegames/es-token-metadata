@@ -17,11 +17,7 @@ pub mod es_token_metadata {
         process_mint_nft(ctx)
     }
 
-    pub fn create_metadata(ctx: Context<CreateMetadata>, data: CreateMetadataArgs) -> Result<()> {
-        process_create_metadata(ctx, data)
+    pub fn create_metadata(ctx: Context<CreateMetadata>, args: CreateMetadataArgs) -> Result<()> {
+        process_create_metadata(ctx, args)
     }
-
-    // pub fn update_metadata_account(ctx: Context<UpdateMetadataAccount>) {
-    //     process_update_metadata_accounts(ctx)
-    // }
 }

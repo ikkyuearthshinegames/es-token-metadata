@@ -2,7 +2,10 @@ import * as anchor from "@project-serum/anchor";
 import { Program, Wallet } from "@project-serum/anchor";
 import { EsTokenMetadata } from "../target/types/es_token_metadata";
 import { TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, getAssociatedTokenAddress, createInitializeMintInstruction, MINT_SIZE, mintTo } from '@solana/spl-token' // IGNORE THESE ERRORS IF ANY
+import dotenv from "dotenv";
 const { SystemProgram } = anchor.web3
+
+dotenv.config();
 
 describe("es-token-metadata", () => {
   // Configure the client to use the local cluster.
@@ -16,8 +19,6 @@ describe("es-token-metadata", () => {
     const lamports: number = await program.provider.connection.getMinimumBalanceForRentExemption(MINT_SIZE);
     // minted token address
     const mintKey: anchor.web3.Keypair = anchor.web3.Keypair.generate();
-    // metadata address
-    // const metadataKey: anchor.web3.Keypair = anchor.web3.Keypair.generate();
 
     // Mint token
     {
@@ -88,7 +89,7 @@ describe("es-token-metadata", () => {
 
     // Create Metadata Account.
     {
-      const MY_PROGRAM_ID: anchor.web3.PublicKey = new anchor.web3.PublicKey("4cPZHiknrGUbDadU8n15D3GpvDfw1GbcvGoT3ccSg522");
+      const MY_PROGRAM_ID: anchor.web3.PublicKey = new anchor.web3.PublicKey(process.env.PROGRAM_ID);
       console.log("Generating PDA...");
       const getMetadata = async (mint: anchor.web3.PublicKey): Promise<anchor.web3.PublicKey> => {
         return (
@@ -107,8 +108,6 @@ describe("es-token-metadata", () => {
       console.log("Generate PDA completed");
 
       console.log("Creating Metadata Account...");
-
-      //console.log("metadataKey", metadataKey.publicKey.toBase58());
       const creators = [
         {
           address: pda,
@@ -126,7 +125,7 @@ describe("es-token-metadata", () => {
         });
       }
 
-      const data: any = {
+      const args: any = {
         data: {
           name: "name_str",
           symbol: "symbol_str",
@@ -151,9 +150,9 @@ describe("es-token-metadata", () => {
       // logObject("account:", account);
 
       {
-        const tx = await program.methods.createMetadata(data)
+        const tx = await program.methods.createMetadata(args)
           .accounts(account)
-          //.signers([mintKey])
+          //.signers([mintKey]) // don't need signer in this case.
           .rpc();
         console.log("CreateMetadataAccount transaction signature", tx);
       }
