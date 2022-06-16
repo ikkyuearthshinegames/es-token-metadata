@@ -3,6 +3,13 @@ pub const METADATA_SEED_KEY: &str = "es-metadata";
 
 // Data Sizes
 // ref: https://book.anchor-lang.com/anchor_references/space.html
+
+pub const MAX_NAME_LENGTH: usize = 32;
+pub const MAX_SYMBOL_LENGTH: usize = 10;
+pub const MAX_URI_LENGTH: usize = 200;
+pub const MAX_CREATOR_LENGTH: usize = 5;
+pub const MAX_BASIS_POINT: u16 = 10000;
+
 pub const METADATA_SIZE: usize =
 32 // pub mint: Pubkey,
 + 32 // pub update_authority: Pubkey,
@@ -11,11 +18,11 @@ pub const METADATA_SIZE: usize =
 ;
 
 pub const DATA_SIZE:usize = 
-4 + 128 // pub name: String,
-+ 4 + 128 // pub symbol: String,
-+ 4 + 128 // pub uri: String,
+4 + MAX_NAME_LENGTH // pub name: String,
++ 4 + MAX_SYMBOL_LENGTH // pub symbol: String,
++ 4 + MAX_URI_LENGTH // pub uri: String,
 + 16 // pub seller_fee_basis_points: u16,
-+ 1 + 4 + (5 * CREATOR_SIZE) //pub creators: Option<Vec<Creator>>,
++ 1 + 4 + (MAX_CREATOR_LENGTH * CREATOR_SIZE) //pub creators: Option<Vec<Creator>>,
 ;
 
 pub const CREATOR_SIZE: usize = 

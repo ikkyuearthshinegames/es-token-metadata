@@ -1,4 +1,4 @@
-use crate::constant::*;
+use crate::constants::*;
 use anchor_lang::prelude::*;
 use anchor_spl::token::Token;
 
@@ -49,15 +49,37 @@ pub struct CreateMetadata<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
     /// CHECK: This is not dangerous because we don't read or write from this account
-    pub mint: UncheckedAccount<'info>,
+    pub mint: AccountInfo<'info>,
+    /// CHECK: This is not dangerous because we don't read or write from this account
     pub mint_authority: Signer<'info>,
+    /// CHECK: This is not dangerous because we don't read or write from this account
     pub update_authority: Signer<'info>,
     pub system_program: Program<'info, System>,
-    pub rent: Sysvar<'info, Rent>,
+    // pub rent: Sysvar<'info, Rent>,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, PartialEq, Debug, Clone)]
 pub struct CreateMetadataArgs {
+    pub data: Data,
+    pub allow_direct_creator_writes: bool,
+    pub is_mutable: bool,
+}
+
+#[derive(Accounts)]
+pub struct UpdateMetadata<'info> {
+    /// CHECK:
+    #[account(mut)]
+    pub metadata: Account<'info, Metadata>,
+    /// CHECK:
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    /// CHECK: This is not dangerous because we don't read or write from this account
+    pub mint: UncheckedAccount<'info>,
+    pub update_authority: Signer<'info>,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, PartialEq, Debug, Clone)]
+pub struct UpdateMetadataArgs {
     pub data: Data,
     pub allow_direct_creator_writes: bool,
     pub is_mutable: bool,
