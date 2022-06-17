@@ -7,11 +7,15 @@ export const createEsTokenMetadata = async (
   walletKeyPair: anchor.web3.Keypair,
   mintKeyPair: anchor.web3.Keypair
 ): Promise<anchor.web3.PublicKey> => {
-  const metadataKey = await getMetadata(
+  const [metadataKey, metadataKeyBump] = await getMetadata(
     esTokenMetadataProgram,
     mintKeyPair.publicKey
   );
-  console.log("[createEsTokenMetadata] metadataKey:", metadataKey.toBase58());
+  console.log(
+    "[createEsTokenMetadata] metadataKey:",
+    metadataKey.toBase58(),
+    metadataKeyBump
+  );
 
   const creators: Creator[] = [
     {
@@ -38,6 +42,9 @@ export const createEsTokenMetadata = async (
       uri: "uri_str",
       sellerFeeBasisPoints: 10,
       creators: creators,
+      shareInsuranceTokenAmount: new anchor.BN(0),
+      shareInsuranceMint: null,
+      referrers: null,
     },
     allowDirectCreatorWrites: false,
     isMutable: true,

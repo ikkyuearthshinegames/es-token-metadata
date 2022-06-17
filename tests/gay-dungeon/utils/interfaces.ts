@@ -60,3 +60,43 @@ export type GayDungeonObject = {
   canChangeSalePrice: boolean;
   escrowPaymentBump: number;
 };
+
+export type SellGayDungeonArgs = {
+  walletKeypair: Keypair;
+  env: string;
+  gayDungeonKey: anchor.web3.PublicKey;
+  buyPrice: number;
+  mintKey: anchor.web3.PublicKey;
+  tokenSize: number;
+  gayDungeonSigns: boolean;
+};
+
+export type GayDungeonTradeStateSeeds = {
+  gayDungeonKey: anchor.web3.PublicKey;
+  walletKey: anchor.web3.PublicKey;
+  tokenAccount: anchor.web3.PublicKey;
+  treasuryMint: anchor.web3.PublicKey;
+  tokenMint: anchor.web3.PublicKey;
+  tokenSize: anchor.BN;
+  buyPrice: anchor.BN;
+};
+
+export type SellGayDungeonRPCArgs = {
+  metadataBump: number;
+  programAsSignerBump: number;
+  buyerPrice: anchor.BN;
+  tokenSize: anchor.BN;
+};
+
+export type SellGayDungeonAccountArgs = {
+  wallet: PublicKey;
+  tokenAccount: PublicKey;
+  metadataAccount: PublicKey;
+  authority: PublicKey;
+  gayDungeon: PublicKey;
+  gayDungeonFeeAccount: PublicKey;
+  sellerTradeState: PublicKey;
+  tokenProgram: PublicKey;
+  systemProgram: PublicKey;
+  rent: any;
+};

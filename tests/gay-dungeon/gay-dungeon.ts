@@ -3,6 +3,8 @@ import { base58_to_binary } from "base58-js";
 import { expect } from "chai";
 import { initEsTokenMetadata } from "../es-token-metadata/utils/account";
 import { initGayDungeon } from "./utils/account";
+import { SellGayDungeonArgs } from "./utils/interfaces";
+import { sell } from "./utils/sell";
 import { showGayDungeon } from "./utils/show-gay-dungeon";
 
 describe("auction-house", () => {
@@ -73,8 +75,19 @@ describe("auction-house", () => {
 
   it("Should execute `sell` function", async () => {
     try {
+      const sellArgs: SellGayDungeonArgs = {
+        buyPrice: 1,
+        env,
+        gayDungeonKey: _gayDungeonKey,
+        gayDungeonSigns: false,
+        mintKey: _mintKeypair.publicKey,
+        tokenSize: 1,
+        walletKeypair: _walletKeyPair,
+      };
+
+      await sell(sellArgs);
     } catch (error) {
-      console.error("error while showGayDungeon => ", error);
+      console.error("error while sell => ", error);
     }
   });
 });

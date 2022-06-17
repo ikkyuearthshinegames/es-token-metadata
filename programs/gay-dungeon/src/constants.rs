@@ -4,6 +4,8 @@ pub const FEE_PAYER: &str = "fee_payer";
 pub const TREASURY: &str = "treasury";
 pub const SIGNER: &str = "signer";
 
+
+
 pub const GAY_DUNGEON_SIZE: usize = 
 8 +                                                         // key
 32 +                                                        // fee Payer
@@ -41,6 +43,7 @@ pub const TRADE_STATE_SIZE: usize =
 + 32    // mint key
 + 32    // metadata key
 + 32    // the highest bidding trade state address
++ 100   // padding
 ;
 
 

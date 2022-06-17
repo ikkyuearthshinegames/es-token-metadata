@@ -14,14 +14,16 @@ import {
   FEE_PAYER,
   GAY_DUNGEON,
   GAY_DUNGEON_PROGRAM_ID,
+  SIGNER,
   SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
   TREASURY,
   TREASURY_WALLET_KEY,
 } from "./constants";
 import { createGayDungeon } from "./create-gay-dungeon";
-import { CreateGayDungeonArgs } from "./interfaces";
+import { CreateGayDungeonArgs, GayDungeonTradeStateSeeds } from "./interfaces";
 import { base58_to_binary } from "base58-js";
+import { ES_TOKEN_METADATA_PROGRAM } from "../../es-token-metadata/utils/constant";
 
 export const loadGayDungeonProgram = async (
   walletKeyPair: Keypair,
@@ -145,4 +147,45 @@ export const getGayDungeonTreasuryAccount = async (
   );
 
   return gdTAcct;
+};
+
+export const getGayDungeonProgramAsSigner = async (): Promise<
+  [PublicKey, number]
+> => {
+  try {
+    const gayDungeonProgramAsSignerAddress: [anchor.web3.PublicKey, number] =
+      await anchor.web3.PublicKey.findProgramAddress(
+        [Buffer.from(GAY_DUNGEON), Buffer.from(SIGNER)],
+        GAY_DUNGEON_PROGRAM_ID
+      );
+
+    return gayDungeonProgramAsSignerAddress;
+  } catch (error) {
+    throw new Error("cannot find getGayDungeonProgramAsSigner address");
+  }
+};
+
+export const getGayDungeonTradeState = async (
+  seeds: GayDungeonTradeStateSeeds
+): Promise<[PublicKey, number]> => {
+  try {
+    const gayDungeonTradeStateAddress: [anchor.web3.PublicKey, number] =
+      await anchor.web3.PublicKey.findProgramAddress(
+        [
+          Buffer.from(GAY_DUNGEON),
+          seeds.walletKey.toBuffer(),
+          seeds.gayDungeonKey.toBuffer(),
+          seeds.tokenAccount.toBuffer(),
+          seeds.treasuryMint.toBuffer(),
+          seeds.tokenMint.toBuffer(),
+          seeds.buyPrice.toBuffer("le", 8),
+          seeds.tokenSize.toBuffer("le", 8),
+        ],
+        GAY_DUNGEON_PROGRAM_ID
+      );
+
+    return gayDungeonTradeStateAddress;
+  } catch (error) {
+    throw new Error("cannot find getGayDungeonTradeState address");
+  }
 };

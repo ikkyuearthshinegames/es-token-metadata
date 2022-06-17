@@ -41,17 +41,15 @@ export const loadEsTokenMetadataProgram = async (
 export const getMetadata = async (
   esTokenMetadataProgram: anchor.Program,
   mint: anchor.web3.PublicKey
-): Promise<anchor.web3.PublicKey> => {
-  return (
-    await anchor.web3.PublicKey.findProgramAddress(
-      [
-        Buffer.from(ES_TOKEN_METADATA_PROGRAM_PREFIX),
-        esTokenMetadataProgram.programId.toBuffer(),
-        mint.toBuffer(),
-      ],
-      esTokenMetadataProgram.programId
-    )
-  )[0];
+): Promise<[anchor.web3.PublicKey, number]> => {
+  return await anchor.web3.PublicKey.findProgramAddress(
+    [
+      Buffer.from(ES_TOKEN_METADATA_PROGRAM_PREFIX),
+      ES_TOKEN_METADATA_PROGRAM.toBuffer(),
+      mint.toBuffer(),
+    ],
+    ES_TOKEN_METADATA_PROGRAM
+  );
 };
 
 export const initEsTokenMetadata = async (
@@ -71,6 +69,10 @@ export const initEsTokenMetadata = async (
     env
   );
 
+  console.log(
+    "[initEsTokenMetadata] esTokenMetadataProgram",
+    esTokenMetadataProgram
+  );
   const mintKeyPair = await mint(esTokenMetadataProgram, walletKeyPair);
 
   const metadataKey = await createEsTokenMetadata(

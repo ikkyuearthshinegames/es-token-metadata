@@ -13,14 +13,14 @@ use crate::state::*;
 #[instruction(
     metadata_bump : u8,
     program_as_signer_bump : u8,
-    buyer_price : u8,
-    token_size : u8
+    buyer_price : u64,
+    token_size : u64
 )]
 pub struct Sell <'info> {
     /// CHECK: Validated in sell_logic.
     /// User wallet account 
     #[account(mut)]
-    pub wallet: UncheckedAccount<'info>,
+    pub wallet: Signer<'info>,
 
     /// SPL token account containing token for sale
     #[account(mut)]
@@ -28,24 +28,26 @@ pub struct Sell <'info> {
 
     /// CHECK: validate via seeds
     /// Custom es-metadata account
-    #[account(
-        mut,
-        seeds = [
-            METADATA_SEED_KEY.as_bytes(),
-            es_token_metadata::id().as_ref(),
-            token_account.mint.as_ref(),
-        ],
-        bump = metadata_bump
-    )]
+    // #[account(
+    //     mut,
+    //     seeds = [
+    //         METADATA_SEED_KEY.as_bytes(),
+    //         es_token_metadata::id().as_ref(),
+    //         token_account.mint.as_ref(),
+    //     ],
+    //     bump = metadata_bump
+    // )]
     pub metadata_account: UncheckedAccount<'info>,
 
     /// CHECK: Validated as a signer in sell_logic.
     /// authority account.
+    #[account(mut)]
     pub authority: UncheckedAccount<'info>,
 
     /// Auction House instance PDA account.
     /// PDA was seeded from PREFIX + Auction house's creator + Auction house's treasury mint
     #[account(
+        mut,
         seeds = [
             PREFIX.as_bytes(), 
             gay_dungeon.creator.as_ref(), 
@@ -90,16 +92,6 @@ pub struct Sell <'info> {
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,
 
-    /// CHECK: Not dangerous. Account seeds checked in constraint.
-    #[account(
-        seeds=[
-            PREFIX.as_bytes(), 
-            SIGNER.as_bytes()
-            ], 
-        bump=program_as_signer_bump
-    )]
-    pub program_as_signer: UncheckedAccount<'info>,
-
     pub rent: Sysvar<'info, Rent>,
 }
 
@@ -107,6 +99,8 @@ pub fn sell<'info> (
     ctx :Context<'_, '_, '_, 'info, Sell<'info>>,
     args : SellArgs
 ) -> Result<()> {
+
+    
     sell_logic(ctx, args)
 }
 
@@ -131,37 +125,13 @@ pub fn sell_logic<'info> (
     let seller_trade_state = &mut ctx.accounts.seller_trade_state;
     let token_program = &ctx.accounts.token_program;
     let system_program = &ctx.accounts.system_program;
-    let program_as_signer = &ctx.accounts.program_as_signer;
     let rent = &ctx.accounts.rent;
 
-
-    // NOTE: Approve the `program_as_signer` to be the delegate of the token_account
-    if wallet.is_signer {
-        invoke(
-            &approve(
-                &token_program.key(),
-                &token_account.key(),
-                &program_as_signer.key(),
-                &wallet.key(),
-                &[],
-                token_size,
-            )
-            .unwrap(),
-            &[
-                token_program.to_account_info(),
-                token_account.to_account_info(),
-                program_as_signer.to_account_info(),
-                wallet.to_account_info(),
-            ],
-        )?;
-    }
-
-    // NOTE: populate the seller_trade_state (except highest_bidder)
-    let seller_trade_state_info = seller_trade_state.to_account_info();
-    if seller_trade_state_info.data_is_empty() {
-        seller_trade_state.ata =  token_account.key();
-        seller_trade_state.price = buyer_price;
-    }
+    
+    seller_trade_state.ata =  token_account.key();
+    seller_trade_state.price = buyer_price;
+    seller_trade_state.metadata_account = metadata_account.key();
+    
     
     Ok(())
 }
