@@ -43,3 +43,20 @@ export type CreateGayDungeonAccountArgs = {
   ataProgram: PublicKey;
   rent: any;
 };
+
+export type GayDungeonObject = {
+  gayDungeonFeeAccount: PublicKey;
+  gayDungeonTreasury: PublicKey;
+  treasuryWithdrawalDestination: PublicKey;
+  feeWithdrawalDestination: PublicKey;
+  treasuryMint: PublicKey;
+  authority: PublicKey;
+  creator: PublicKey;
+  bump: number;
+  treasuryBump: number;
+  feePayerBump: number;
+  sellerFeeBasisPoints: number;
+  requiresSignOff: boolean;
+  canChangeSalePrice: boolean;
+  escrowPaymentBump: number;
+};
