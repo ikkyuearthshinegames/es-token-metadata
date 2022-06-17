@@ -28,6 +28,8 @@ pub enum ESTokenMetadataError {
     #[msg("Basis points cannot be more than 10000")]
     InvalidBasisPoints,
 
+    #[msg("Invalid token amount")]
+    InvalidTokenAmount,
     #[msg("Creators list too long")]
     CreatorsTooLong,
     #[msg("Creators must be at least one if set")]

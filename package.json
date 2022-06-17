@@ -5,7 +5,13 @@
     "test": "anchor test",
     "test:skip-deploy": "anchor test --skip-deploy",
     "test:skip-validator": "anchor test --skip-local-validator",
-    "test-gay": "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/gay-dungeon/gay-dungeon.ts"
+    "test-gay": "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/gay-dungeon/gay-dungeon.ts",
+
+    "build-es": "anchor build -p es_token_metadata",
+    "deploy-es": "solana program deploy ./target/deploy/es_token_metadata.so",
+    "testonly-es": "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/es-token-metadata/es-token-metadata.ts",
+    "test-es": "npm run build-es && npm run deploy-es && npm run testonly-es",
+    "upgrade-idl-es": "anchor idl upgrade --filepath ./target/idl/es_token_metadata.json 4cPZHiknrGUbDadU8n15D3GpvDfw1GbcvGoT3ccSg522"
   },
   "dependencies": {
     "@project-serum/anchor": "^0.24.2",
