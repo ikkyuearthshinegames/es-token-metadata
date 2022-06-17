@@ -6,8 +6,9 @@ use anchor_lang::prelude::*;
 pub use constant::*;
 pub use process::*;
 pub use state::*;
+pub use solana_program;
 
-declare_id!("4cPZHiknrGUbDadU8n15D3GpvDfw1GbcvGoT3ccSg522");
+solana_program::declare_id!("2omaJbwJ1n2sxKu66UXtKdQ179UaxtFKZuKXqer5jaBX");
 
 #[program]
 pub mod es_token_metadata {
