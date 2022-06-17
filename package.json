@@ -11,7 +11,7 @@
     "deploy-es": "solana program deploy ./target/deploy/es_token_metadata.so",
     "testonly-es": "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/es-token-metadata/es-token-metadata.ts",
     "test-es": "npm run build-es && npm run deploy-es && npm run testonly-es",
-    "upgrade-idl-es": "anchor idl upgrade --filepath ./target/idl/es_token_metadata.json 4cPZHiknrGUbDadU8n15D3GpvDfw1GbcvGoT3ccSg522"
+    "upgrade-idl-es": "anchor idl upgrade --filepath ./target/idl/es_token_metadata.json 4fhHqbNqYXmGVgYtff1y75BGczADSq3vB9nNnzfDRNwi"
   },
   "dependencies": {
     "@project-serum/anchor": "^0.24.2",

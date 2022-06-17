@@ -1,10 +1,10 @@
 [features]
 seeds = false
 [programs.localnet]
-es_token_metadata = "4cPZHiknrGUbDadU8n15D3GpvDfw1GbcvGoT3ccSg529"
+es_token_metadata = "4fhHqbNqYXmGVgYtff1y75BGczADSq3vB9nNnzfDRNwi"
 
 [programs.devnet]
-es_token_metadata = "4cPZHiknrGUbDadU8n15D3GpvDfw1GbcvGoT3ccSg529"
+es_token_metadata = "4fhHqbNqYXmGVgYtff1y75BGczADSq3vB9nNnzfDRNwi"
 gay_dungeon = "Bz4repUbACRtNKsrTZUhgfNzXKbsu6JcLzawHFqoSz3X"
 
 [registry]
