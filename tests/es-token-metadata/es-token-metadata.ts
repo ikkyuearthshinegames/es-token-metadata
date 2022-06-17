@@ -165,9 +165,9 @@ describe("es-token-metadata", () => {
 
       token_metadata = {
         data: {
-          name: "name_str",
-          symbol: "symbol_str",
-          uri: "uri_str",
+          name: "name#01",
+          symbol: "symbol#01",
+          uri: "http://www.uri_01.com",
           sellerFeeBasisPoints: 10,
           creators: creators,
         },
@@ -212,10 +212,9 @@ describe("es-token-metadata", () => {
 
     // Update Metadata Account.
     {
-      token_metadata.data.name =
-        "new_name_str_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-      token_metadata.data.symbol = "new_symbol_str";
-      token_metadata.data.uri = "new_uri_str";
+      token_metadata.data.name ="name#02";
+      token_metadata.data.symbol = "symbol#02";
+      token_metadata.data.uri = "http://www.uri_02.com";
       token_metadata.isMutable = false;
 
       const account = {
