@@ -2,6 +2,7 @@ use crate::constants::*;
 use anchor_lang::prelude::*;
 use anchor_spl::token::Token;
 
+#[repr(C)]
 #[derive(Accounts)]
 pub struct MintNft<'info> {
     #[account(mut)]
@@ -23,6 +24,7 @@ pub struct MintNft<'info> {
     pub rent: AccountInfo<'info>,
 }
 
+#[repr(C)]
 #[derive(AnchorSerialize, AnchorDeserialize, PartialEq, Debug, Clone)]
 pub struct MintNFTArgs {
     pub creator_key: Pubkey,
@@ -30,6 +32,7 @@ pub struct MintNFTArgs {
     pub title: String,
 }
 
+#[repr(C)]
 #[derive(Accounts)]
 pub struct CreateMetadata<'info> {
     /// CHECK:
@@ -58,6 +61,7 @@ pub struct CreateMetadata<'info> {
     // pub rent: Sysvar<'info, Rent>,
 }
 
+#[repr(C)]
 #[derive(AnchorSerialize, AnchorDeserialize, PartialEq, Debug, Clone)]
 pub struct CreateMetadataArgs {
     pub data: Data,
@@ -65,6 +69,7 @@ pub struct CreateMetadataArgs {
     pub is_mutable: bool,
 }
 
+#[repr(C)]
 #[derive(Accounts)]
 pub struct UpdateMetadata<'info> {
     /// CHECK:
@@ -78,6 +83,7 @@ pub struct UpdateMetadata<'info> {
     pub update_authority: Signer<'info>,
 }
 
+#[repr(C)]
 #[derive(AnchorSerialize, AnchorDeserialize, PartialEq, Debug, Clone)]
 pub struct UpdateMetadataArgs {
     pub data: Data,
@@ -85,6 +91,7 @@ pub struct UpdateMetadataArgs {
     pub is_mutable: bool,
 }
 
+#[repr(C)]
 #[account]
 pub struct Metadata {
     pub mint: Pubkey,
@@ -93,6 +100,7 @@ pub struct Metadata {
     pub is_mutable: bool,
 }
 
+#[repr(C)]
 #[derive(AnchorSerialize, AnchorDeserialize, PartialEq, Debug, Clone)]
 pub struct Data {
     /// The name of the asset
@@ -103,14 +111,28 @@ pub struct Data {
     pub uri: String,
     /// Royalty basis points that goes to creators in secondary sales (0-10000)
     pub seller_fee_basis_points: u16,
+    /// Amount of insurance token that owner mint for this nft
+    pub share_insurance_token_amount: u64,
+    // /// mint insurance token address
+    pub share_insurance_mint: Option<Pubkey>,
     /// Array of creators, optional
     pub creators: Option<Vec<Creator>>,
+    // /// Array of referrer, optional
+    pub referrers: Option<Vec<Referrer>>,
 }
 
+#[repr(C)]
 #[derive(AnchorSerialize, AnchorDeserialize, PartialEq, Debug, Clone)]
 pub struct Creator {
+    // creator
     pub address: Pubkey,
     pub verified: bool,
     // In weight
     pub share: u64,
+}
+
+#[repr(C)]
+#[derive(AnchorSerialize, AnchorDeserialize, PartialEq, Debug, Clone)]
+pub struct Referrer {
+    pub address: Pubkey,
 }

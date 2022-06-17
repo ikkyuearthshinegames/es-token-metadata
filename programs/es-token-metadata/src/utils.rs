@@ -3,15 +3,24 @@ use anchor_lang::{
     prelude::*,
     solana_program::{program_memory::sol_memcmp, pubkey::PUBKEY_BYTES},
 };
-use anchor_spl::token;
-use anchor_spl::token::MintTo;
+use anchor_spl::token::*;
+
 use arrayref::{array_ref, array_refs};
+use solana_program::program_pack::Pack;
 
 pub fn get_mint_authority(account_info: &AccountInfo) -> Result<Option<Pubkey>> {
     // In token program, 36, 8, 1, 1 is the layout, where the first 36 is mint_authority
     // so we start at 0.
     let data = account_info.try_borrow_data().unwrap();
+    msg!("{:?}", data);
     let authority_bytes = array_ref![data, 0, 36];
+
+    // let result = spl_token::state::Account::unpack(&data)
+    //     // .map(anchor_spl::token::TokenAccount)
+    //     //.map_err(Into::into)
+    // ;
+    // msg!("result");
+    // msg!("{:?}", result);
 
     unpack_coption_key(authority_bytes)
 }
@@ -97,6 +106,14 @@ pub fn assert_data_valid(
     if data.seller_fee_basis_points > MAX_BASIS_POINT {
         return Err(ESTokenMetadataError::InvalidBasisPoints.into());
     }
+
+    if data.share_insurance_mint.is_some() {
+    } else {
+        if data.share_insurance_token_amount > 0 {
+            return Err(ESTokenMetadataError::InvalidTokenAmount.into());
+        }
+    }
+
     if data.creators.is_some() {
         if let Some(creators) = &data.creators {
             if creators.len() > MAX_CREATOR_LENGTH {
@@ -168,5 +185,6 @@ pub fn assert_data_valid(
             }
         }
     }
+
     Ok(())
 }
