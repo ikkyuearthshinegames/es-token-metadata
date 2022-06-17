@@ -2,7 +2,7 @@
 use anchor_lang::prelude::*;
 
 use anchor_spl::token::{Token, TokenAccount};
-use es_token_metadata::constant::*;
+use es_token_metadata::constants::*;
 
 use crate::constants::*;
 use crate::state::*;
