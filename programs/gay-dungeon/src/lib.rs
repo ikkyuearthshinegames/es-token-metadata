@@ -41,9 +41,9 @@ pub mod gay_dungeon {
     pub fn sell <'info> (
         ctx : Context<'_, '_,'_,'info,  Sell<'info>>,
         metadata_bump : u8,
-    program_as_signer_bump : u8,
-    buyer_price : u64,
-    token_size : u64
+        program_as_signer_bump : u8,
+        buyer_price : u64,
+        token_size : u64
     ) -> Result<()>{
         msg!("metadata_bump = {:?}", metadata_bump);
         msg!("program_as_signer_bump = {:?}", program_as_signer_bump);
@@ -52,6 +52,15 @@ pub mod gay_dungeon {
 
         let args = SellArgs { metadata_bump: metadata_bump, program_as_signer_bump: program_as_signer_bump, buyer_price: buyer_price, token_size: token_size};
         sell::sell(ctx, args)
+    }
+
+    pub fn bid<'info> (
+        ctx : Context<'_, '_,'_,'info,  Bid<'info>>,
+        buyer_price : u64,
+        token_size : u64,
+        escrow_payment_bump : u8
+    ) -> Result<()> {
+        bid::bid(ctx,buyer_price,token_size,escrow_payment_bump)
     }
 }
 

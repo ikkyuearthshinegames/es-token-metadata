@@ -28,18 +28,9 @@ pub struct Sell <'info> {
 
     /// CHECK: validate via seeds
     /// Custom es-metadata account
-    // #[account(
-    //     mut,
-    //     seeds = [
-    //         METADATA_SEED_KEY.as_bytes(),
-    //         es_token_metadata::id().as_ref(),
-    //         token_account.mint.as_ref(),
-    //     ],
-    //     bump = metadata_bump
-    // )]
     pub metadata_account: UncheckedAccount<'info>,
 
-    /// CHECK: Validated as a signer in sell_logic.
+    /// CHECK: Validated as a signer i n sell_logic.
     /// authority account.
     #[account(mut)]
     pub authority: UncheckedAccount<'info>,
@@ -89,6 +80,16 @@ pub struct Sell <'info> {
     )]
     pub seller_trade_state: Account<'info, SellerTradeState>,
 
+     /// CHECK: Not dangerous. Account seeds checked in constraint.
+     #[account(
+         seeds=[
+             PREFIX.as_bytes(), 
+             SIGNER.as_bytes()
+             ], 
+        bump=program_as_signer_bump
+    )]
+     pub program_as_signer: UncheckedAccount<'info>,
+
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,
 
@@ -99,6 +100,9 @@ pub fn sell<'info> (
     ctx :Context<'_, '_, '_, 'info, Sell<'info>>,
     args : SellArgs
 ) -> Result<()> {
+    msg!("METADATA_SEED_KEY : {:?}", METADATA_SEED_KEY);
+    msg!("es_token_metadata::id() : {:?}", es_token_metadata::id());
+    msg!(" token_account.mint.key() : {:?}",   &ctx.accounts.token_account.mint.key());
 
     
     sell_logic(ctx, args)
@@ -126,11 +130,35 @@ pub fn sell_logic<'info> (
     let token_program = &ctx.accounts.token_program;
     let system_program = &ctx.accounts.system_program;
     let rent = &ctx.accounts.rent;
+    let program_as_signer = &ctx.accounts.program_as_signer;
 
     
     seller_trade_state.ata =  token_account.key();
     seller_trade_state.price = buyer_price;
     seller_trade_state.metadata_account = metadata_account.key();
+
+    if wallet.is_signer {
+
+        msg!("Delegated the transfer authority to program_as_signer");
+        invoke(
+            &approve(
+                &token_program.key(),
+                &token_account.key(),
+                &program_as_signer.key(),
+                &wallet.key(),
+                &[],
+                token_size,
+            )
+            .unwrap(),
+            &[
+                token_program.to_account_info(),
+                token_account.to_account_info(),
+                program_as_signer.to_account_info(),
+                wallet.to_account_info(),
+            ],
+        )?;
+    }
+
     
     
     Ok(())

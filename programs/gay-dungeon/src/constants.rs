@@ -37,6 +37,11 @@ pub const GAY_DUNGEON_TREASURY_SIZE: usize =
 + 32    // public key
 ;
 
+pub const ESCROW_PAYMENT_ACCOUNT_SIZE: usize = 
+4       // default allocation
++ 32    // public key
+;
+
 pub const TRADE_STATE_SIZE: usize = 
 4       // default allocation
 + 32    // seller pubkey
@@ -45,5 +50,7 @@ pub const TRADE_STATE_SIZE: usize =
 + 32    // the highest bidding trade state address
 + 100   // padding
 ;
+
+
 
 

@@ -47,3 +47,10 @@ pub struct SellArgs {
     pub buyer_price : u64,
     pub token_size : u64
 }
+
+#[account]
+pub struct BuyerTradeState {
+    pub bidder: Pubkey,
+    pub bid_price: u64,
+    pub ata: Pubkey,
+}

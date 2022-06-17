@@ -99,4 +99,5 @@ export type SellGayDungeonAccountArgs = {
   tokenProgram: PublicKey;
   systemProgram: PublicKey;
   rent: any;
+  programAsSigner: PublicKey;
 };

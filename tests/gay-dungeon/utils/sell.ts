@@ -156,6 +156,7 @@ export const sell = async (args: SellGayDungeonArgs) => {
     tokenAccount: tokenAccountKey,
     tokenProgram: TOKEN_PROGRAM_ID,
     wallet: walletKeypair.publicKey,
+    programAsSigner,
   };
 
   console.log("[sell] || sellAccount => ", sellAccount);
