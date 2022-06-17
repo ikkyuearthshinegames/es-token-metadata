@@ -165,7 +165,7 @@ export const initEsTokenMetadata = async (
     },
   ];
 
-  // Add creators
+  // NOTE: Add creators with specified shares
   [10, 30, 40, 10].map((share) => {
     const _walletKeyPair = anchor.web3.Keypair.generate();
     creators.push({

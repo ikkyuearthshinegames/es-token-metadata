@@ -28,7 +28,7 @@ describe("auction-house", () => {
   });
 
   let _walletKeyPair: anchor.web3.Keypair;
-  let _gayDungeon: anchor.web3.PublicKey;
+  let _gayDungeonKey: anchor.web3.PublicKey;
   let _esTokenMetaDataKey: anchor.web3.PublicKey;
   let _mintKeypair: anchor.web3.Keypair;
 
@@ -38,7 +38,7 @@ describe("auction-house", () => {
         const { walletKeyPair, gayDungeon } = await initGayDungeon();
 
         _walletKeyPair = walletKeyPair;
-        _gayDungeon = gayDungeon;
+        _gayDungeonKey = gayDungeon;
       } catch (error) {
         console.error("error while initGayDungeon => ", error);
       }
@@ -61,9 +61,9 @@ describe("auction-house", () => {
   it("Should successfully create auction house", async () => {
     try {
       await showGayDungeon({
-        keypair: jeeKeypair,
+        walletKeyPair: _walletKeyPair,
         env: env,
-        gayDungeon: jeeKeypair.publicKey,
+        gayDungeonKey: _gayDungeonKey,
         treasuryMint: null,
       });
     } catch (error) {
