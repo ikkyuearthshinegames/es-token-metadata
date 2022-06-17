@@ -58,7 +58,7 @@ describe("auction-house", () => {
     })();
   });
 
-  it("Should successfully create auction house", async () => {
+  it("Should successfully create Gay Dungeon", async () => {
     try {
       await showGayDungeon({
         walletKeyPair: _walletKeyPair,
@@ -67,8 +67,14 @@ describe("auction-house", () => {
         treasuryMint: null,
       });
     } catch (error) {
-      expect(error.message).to.equal("error");
-      console.error(error);
+      console.error("error while showGayDungeon => ", error);
+    }
+  });
+
+  it("Should execute `sell` function", async () => {
+    try {
+    } catch (error) {
+      console.error("error while showGayDungeon => ", error);
     }
   });
 });
