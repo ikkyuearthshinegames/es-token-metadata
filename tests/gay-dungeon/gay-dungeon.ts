@@ -1,12 +1,13 @@
 import * as anchor from "@project-serum/anchor";
 import { base58_to_binary } from "base58-js";
 import { expect } from "chai";
+import { initEsTokenMetadata } from "../es-token-metadata/utils/account";
 import { initGayDungeon } from "./utils/account";
 import { showGayDungeon } from "./utils/show-gay-dungeon";
 
 describe("auction-house", () => {
   // Configure the client to use the local cluster.
-  const env = "https://api.devnet.solana.com";
+  const env = "devnet";
 
   const jeeKeypair: anchor.web3.Keypair = new anchor.web3.Keypair({
     publicKey: new anchor.web3.PublicKey(
@@ -26,12 +27,31 @@ describe("auction-house", () => {
     ),
   });
 
+  let _walletKeyPair: anchor.web3.Keypair;
+  let _gayDungeon: anchor.web3.PublicKey;
+  let _esTokenMetaDataKey: anchor.web3.PublicKey;
+  let _mintKeypair: anchor.web3.Keypair;
+
   before((done) => {
     (async () => {
       try {
-        await initGayDungeon();
+        const { walletKeyPair, gayDungeon } = await initGayDungeon();
+
+        _walletKeyPair = walletKeyPair;
+        _gayDungeon = gayDungeon;
       } catch (error) {
-        console.error("error while initializing => ", error);
+        console.error("error while initGayDungeon => ", error);
+      }
+
+      try {
+        const { esTokenMetaDataKey, mintKeypair } = await initEsTokenMetadata(
+          _walletKeyPair,
+          env
+        );
+        _esTokenMetaDataKey = esTokenMetaDataKey;
+        _mintKeypair = mintKeypair;
+      } catch (error) {
+        console.error("error while initEsTokenMetadata => ", error);
       }
 
       done();
@@ -42,8 +62,8 @@ describe("auction-house", () => {
     try {
       await showGayDungeon({
         keypair: jeeKeypair,
-        env: "devnet",
-        auctionHouse: jeeKeypair.publicKey,
+        env: env,
+        gayDungeon: jeeKeypair.publicKey,
         treasuryMint: null,
       });
     } catch (error) {

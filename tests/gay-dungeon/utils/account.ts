@@ -70,16 +70,10 @@ export const addSOLToWallet = async (wallet: Keypair) => {
   }
 };
 
-export const initGayDungeon = async (): Promise<PublicKey> => {
-  // const jeeKeypair: anchor.web3.Keypair = new anchor.web3.Keypair({
-  //   publicKey: new anchor.web3.PublicKey(
-  //     "ESz5bto4fkF68grek4cAhsfn7r9XBnG85RLZLkJRAzbE"
-  //   ).toBuffer(),
-  //   secretKey: base58_to_binary(
-  //     "4KVhGLcLJJqppjZb9MbDZSXCJp1Qh8Xr9sbVTeCboGrRRCaeJ2SvNkuGvs7kW5wPYJfSrjs75fcSLT3d86ncx9yN"
-  //   ),
-  // });
-
+export const initGayDungeon = async (): Promise<{
+  walletKeyPair: anchor.web3.Keypair;
+  gayDungeon: PublicKey;
+}> => {
   const walletKeyPair = anchor.web3.Keypair.generate();
 
   await addSOLToWallet(walletKeyPair);
@@ -100,7 +94,7 @@ export const initGayDungeon = async (): Promise<PublicKey> => {
     gayDungeon.toBase58()
   );
 
-  return gayDungeon;
+  return { walletKeyPair, gayDungeon };
 };
 
 export const getAtaForMint = async (

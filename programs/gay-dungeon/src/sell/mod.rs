@@ -1,6 +1,7 @@
 
 use anchor_lang::prelude::*;
-
+use solana_program::program::invoke;
+use spl_token::instruction::approve;
 use anchor_spl::token::{Token, TokenAccount};
 use es_token_metadata::constants::*;
 
@@ -17,7 +18,7 @@ use crate::state::*;
 )]
 pub struct Sell <'info> {
     /// CHECK: Validated in sell_logic.
-    /// User wallet account
+    /// User wallet account 
     #[account(mut)]
     pub wallet: UncheckedAccount<'info>,
 
@@ -56,7 +57,7 @@ pub struct Sell <'info> {
     )]
     pub gay_dungeon: Box<Account<'info, GayDungeon>>,
 
-    // CHECK: validate via seeds
+    /// CHECK: validate via seeds
     #[account(
         mut,
         seeds = [
@@ -100,4 +101,67 @@ pub struct Sell <'info> {
     pub program_as_signer: UncheckedAccount<'info>,
 
     pub rent: Sysvar<'info, Rent>,
+}
+
+pub fn sell<'info> (
+    ctx :Context<'_, '_, '_, 'info, Sell<'info>>,
+    args : SellArgs
+) -> Result<()> {
+    sell_logic(ctx, args)
+}
+
+pub fn sell_logic<'info> (
+    ctx :Context<'_, '_, '_, 'info, Sell<'info>>,
+    args : SellArgs
+) -> Result<()>{
+    let SellArgs {
+        metadata_bump ,
+        program_as_signer_bump ,
+        buyer_price ,
+        token_size ,
+    } = args;
+
+    // NOTE: extract all variables from ctx (Sell struct)
+    let wallet = &ctx.accounts.wallet;
+    let token_account = &ctx.accounts.token_account;
+    let metadata_account = &ctx.accounts.metadata_account;
+    let authority = &ctx.accounts.authority;
+    let gay_dungeon = &ctx.accounts.gay_dungeon;
+    let gay_dungeon_fee_account = &ctx.accounts.gay_dungeon_fee_account;
+    let seller_trade_state = &mut ctx.accounts.seller_trade_state;
+    let token_program = &ctx.accounts.token_program;
+    let system_program = &ctx.accounts.system_program;
+    let program_as_signer = &ctx.accounts.program_as_signer;
+    let rent = &ctx.accounts.rent;
+
+
+    // NOTE: Approve the `program_as_signer` to be the delegate of the token_account
+    if wallet.is_signer {
+        invoke(
+            &approve(
+                &token_program.key(),
+                &token_account.key(),
+                &program_as_signer.key(),
+                &wallet.key(),
+                &[],
+                token_size,
+            )
+            .unwrap(),
+            &[
+                token_program.to_account_info(),
+                token_account.to_account_info(),
+                program_as_signer.to_account_info(),
+                wallet.to_account_info(),
+            ],
+        )?;
+    }
+
+    // NOTE: populate the seller_trade_state (except highest_bidder)
+    let seller_trade_state_info = seller_trade_state.to_account_info();
+    if seller_trade_state_info.data_is_empty() {
+        seller_trade_state.ata =  token_account.key();
+        seller_trade_state.price = buyer_price;
+    }
+    
+    Ok(())
 }

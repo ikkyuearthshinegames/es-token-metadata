@@ -1,9 +1,21 @@
 import * as anchor from "@project-serum/anchor";
-import { ACCOUNT_DISCRIMINATOR_SIZE, BorshCoder, Program, Wallet } from "@project-serum/anchor";
-import { EsTokenMetadata } from "../target/types/es_token_metadata";
-import { TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, getAssociatedTokenAddress, createInitializeMintInstruction, MINT_SIZE, mintTo } from '@solana/spl-token' // IGNORE THESE ERRORS IF ANY
+import {
+  ACCOUNT_DISCRIMINATOR_SIZE,
+  BorshCoder,
+  Program,
+  Wallet,
+} from "@project-serum/anchor";
+import { EsTokenMetadata } from "../../target/types/es_token_metadata";
+import {
+  TOKEN_PROGRAM_ID,
+  createAssociatedTokenAccountInstruction,
+  getAssociatedTokenAddress,
+  createInitializeMintInstruction,
+  MINT_SIZE,
+  mintTo,
+} from "@solana/spl-token"; // IGNORE THESE ERRORS IF ANY
 import dotenv from "dotenv";
-const { SystemProgram } = anchor.web3
+const { SystemProgram } = anchor.web3;
 
 dotenv.config();
 
@@ -18,7 +30,10 @@ describe("es-token-metadata", () => {
     const idl = await anchor.Program.fetchIdl(process.env.PROGRAM_ID);
     // console.log(idl);
 
-    const lamports: number = await program.provider.connection.getMinimumBalanceForRentExemption(MINT_SIZE);
+    const lamports: number =
+      await program.provider.connection.getMinimumBalanceForRentExemption(
+        MINT_SIZE
+      );
     // minted token address
     const mintKey: anchor.web3.Keypair = anchor.web3.Keypair.generate();
 
@@ -70,7 +85,9 @@ describe("es-token-metadata", () => {
 
       // sends and create the transaction
       // console.log("Sending transaction...");
-      const res = await anchor.AnchorProvider.env().sendAndConfirm(tx, [mintKey]);
+      const res = await anchor.AnchorProvider.env().sendAndConfirm(tx, [
+        mintKey,
+      ]);
       // console.log("res: ", res);
 
       {
@@ -99,7 +116,9 @@ describe("es-token-metadata", () => {
         await logDetails(objs);
 
         const minted = await getAccountInfo(ata);
-        const minted_amount = (minted.value.data as anchor.web3.ParsedAccountData).parsed.info.tokenAmount.amount;
+        const minted_amount = (
+          minted.value.data as anchor.web3.ParsedAccountData
+        ).parsed.info.tokenAmount.amount;
         console.log(`minted[${minted_amount}]`);
       }
     }
@@ -108,7 +127,9 @@ describe("es-token-metadata", () => {
     {
       console.log("Generating PDA...");
 
-      const getMetadata = async (mint: anchor.web3.PublicKey): Promise<anchor.web3.PublicKey> => {
+      const getMetadata = async (
+        mint: anchor.web3.PublicKey
+      ): Promise<anchor.web3.PublicKey> => {
         return (
           await anchor.web3.PublicKey.findProgramAddress(
             [
@@ -148,10 +169,10 @@ describe("es-token-metadata", () => {
           symbol: "symbol_str",
           uri: "uri_str",
           sellerFeeBasisPoints: 10,
-          creators: creators
+          creators: creators,
         },
         allowDirectCreatorWrites: false,
-        isMutable: true
+        isMutable: true,
       };
       // logObject("data:", token_metadata);
 
@@ -167,7 +188,8 @@ describe("es-token-metadata", () => {
       // logObject("account:", account);
 
       {
-        const tx = await program.methods.createMetadata(token_metadata)
+        const tx = await program.methods
+          .createMetadata(token_metadata)
           .accounts(account)
           // .signers([mintKey]) // don't need signer in this case.
           .rpc();
@@ -176,7 +198,7 @@ describe("es-token-metadata", () => {
       console.log("Create metadata completed\n\n");
 
       // const metadata = await program.account.metadata.fetch(pda);
-      // logObject("metadata:", metadata);     
+      // logObject("metadata:", metadata);
 
       // Debug Print
       {
@@ -190,7 +212,8 @@ describe("es-token-metadata", () => {
 
     // Update Metadata Account.
     {
-      token_metadata.data.name = "new_name_str_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+      token_metadata.data.name =
+        "new_name_str_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
       token_metadata.data.symbol = "new_symbol_str";
       token_metadata.data.uri = "new_uri_str";
       token_metadata.isMutable = false;
@@ -203,7 +226,8 @@ describe("es-token-metadata", () => {
       };
 
       {
-        const tx = await program.methods.updateMetadata(token_metadata)
+        const tx = await program.methods
+          .updateMetadata(token_metadata)
           .accounts(account)
           // .signers([mintKey]) // don't need signer in this case.
           .rpc();
@@ -230,8 +254,8 @@ async function logDetails(objs: [String, any][]) {
         const publicKey: anchor.web3.PublicKey = obj as anchor.web3.PublicKey;
         let accountInfo = await getAccountInfo(publicKey);
         if (
-          accountInfo.value.data instanceof Buffer
-          && accountInfo.value.data.toJSON().data.length > 0
+          accountInfo.value.data instanceof Buffer &&
+          accountInfo.value.data.toJSON().data.length > 0
         ) {
           const metadata = await program.account.metadata.fetch(publicKey);
           let parsed_data: anchor.web3.ParsedAccountData = {
@@ -239,7 +263,7 @@ async function logDetails(objs: [String, any][]) {
             parsed: metadata,
             space: 0,
           };
-          accountInfo.value.data = parsed_data; // override data to parsed_data       
+          accountInfo.value.data = parsed_data; // override data to parsed_data
         }
 
         logObject(`${name}\n(${publicKey.toBase58()}):`, accountInfo);

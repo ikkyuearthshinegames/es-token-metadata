@@ -33,11 +33,16 @@ pub struct CreateGayDungeonArgs {
 
 #[account]
 pub struct SellerTradeState {
-    
+    pub ata: Pubkey,
+    pub price: u16,
+    pub highest_bidder: Pubkey,
 }
 
 #[repr(C)]
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
 pub struct SellArgs {
-
+    pub metadata_bump : u8,
+    pub program_as_signer_bump : u8,
+    pub buyer_price : u16,
+    pub token_size : u64
 }

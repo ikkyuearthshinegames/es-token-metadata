@@ -14,13 +14,15 @@ import { loadGayDungeonProgram } from "./account";
 export const showGayDungeon = async ({
   keypair,
   env,
-  auctionHouse,
+  gayDungeon,
   treasuryMint,
 }: {
   keypair: Keypair;
   env: string;
-  auctionHouse: PublicKey;
+  gayDungeon: PublicKey;
   treasuryMint: PublicKey;
 }): Promise<void> => {
-  console.log("SHOWING GAY DUNGEON");
+  console.log("----------- --------------------- ------------");
+  console.log("----------- SHOWING GAY DUNGEON   ------------");
+  console.log("----------- --------------------- ------------");
 };
