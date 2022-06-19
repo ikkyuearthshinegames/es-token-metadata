@@ -14,4 +14,6 @@ pub enum GayDungeonError {
     #[msg("The given account is not an owner")]
     IncorrectOwner,
 
+    #[msg("The mathematic calculation returns invalid value")]
+    NumericalOverflow,
 }

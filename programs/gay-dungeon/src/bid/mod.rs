@@ -3,12 +3,13 @@
 use anchor_lang::{
     prelude::*,
     solana_program::{program::invoke, system_instruction},
-    AnchorDeserialize,
+    AnchorDeserialize, system_program,
 };
 
 use anchor_spl::token::{Mint, Token, TokenAccount};
 use crate::state::*;
 use crate::constants::*;
+use crate::errors::*;
 #[derive(Accounts)]
 #[instruction(
     buyer_price: u64,
@@ -130,6 +131,10 @@ pub fn bid_logic <'info> (
     let gay_dungeon = &mut ctx.accounts.gay_dungeon;
     let escrow_payment_account = & ctx.accounts.escrow_payment_account;
     let buyer_trade_state = &mut ctx.accounts.buyer_trade_state;
+    let treasury_mint = &ctx.accounts.treasury_mint;
+    let rent = &ctx.accounts.rent;
+    let payment_account = &ctx.accounts.payment_account;
+    let system_program = &ctx.accounts.system_program;
 
     // NOTE: populate buyer_trade_state
     buyer_trade_state.bidder = wallet.key();
@@ -139,6 +144,36 @@ pub fn bid_logic <'info> (
 
     // NOTE: add escrow_payment_account_bump to gay_dungeon
     gay_dungeon.escrow_payment_bump = escrow_payment_bump;
+
+    // NOTE:  check for duble bidding and transfer lamports to escrow account
+    let is_native = treasury_mint.key() == spl_token::native_mint::id();
+
+    if is_native {
+        let total_lamport_required = buyer_price.checked_add(rent.minimum_balance((escrow_payment_account.data_len()))).ok_or(GayDungeonError::NumericalOverflow)?;
+
+        if escrow_payment_account.lamports() < total_lamport_required {
+            let diff = buyer_price
+                .checked_add(rent.minimum_balance(escrow_payment_account.data_len()))
+                .ok_or(GayDungeonError::NumericalOverflow)?
+                .checked_sub(escrow_payment_account.lamports())
+                .ok_or(GayDungeonError::NumericalOverflow)?;
+
+            invoke(
+                &system_instruction::transfer(
+                    payment_account.key, 
+                    escrow_payment_account.key, 
+                    diff
+                ), 
+                &[
+                    payment_account.to_account_info(),
+                    escrow_payment_account.to_account_info(),
+                    system_program.to_account_info()
+                ]
+            )?;
+        }
+    }
+
+    // TODO: add SPL_TOKEN suppport
 
 
     Ok(())
