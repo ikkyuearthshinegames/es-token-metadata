@@ -14,12 +14,17 @@ use crate::errors::*;
 #[instruction(
     buyer_price: u64,
     token_size: u64,
-    escrow_payment_bump : u8
+    escrow_payment_bump : u8,
+    seller_trade_state_bump : u8
 )]
 pub struct Bid<'info> {
     /// User wallet account
     #[account(mut)]
     pub wallet: Signer<'info>,
+
+    /// CHECK: safe.
+    /// seller's wallet address
+    pub seller: UncheckedAccount<'info>,
 
     /// CHECK: Validated in big_logic
     /// User SOL or SPL account to transfer funds from.
@@ -73,7 +78,13 @@ pub struct Bid<'info> {
         payer = wallet,
         space = TRADE_STATE_SIZE
     )]
+    // FIXME: imo, buyer_trade_state is not supposed to be the function of buyer_price, since the buyer_price can be changed when rebidding and we do not want to keep create an account of every trade state. Moreover, we already have BuyerTradeState struct, so we can update the buyer_price in this struct instead.
     buyer_trade_state:  Account<'info, BuyerTradeState>,
+
+    /// CHECK: Not dangerous. Validate via seeds check.
+    /// Seller trade state PDA account encoding the sell order.
+    #[account(mut)]
+    pub seller_trade_state: Box<Account<'info, SellerTradeState>>,
 
     /// Auction House instance PDA account.
     /// PDA was seeded from PREFIX + Auction house's creator + Auction house's treasury mint
@@ -111,7 +122,7 @@ pub fn bid<'info> (
     ctx: Context<'_, '_, '_, 'info, Bid<'info>>,
     buyer_price: u64,
     token_size: u64,
-    escrow_payment_bump : u8
+    escrow_payment_bump : u8,
 ) -> Result<()> {
     // TODO: add assertions
 
@@ -123,7 +134,7 @@ pub fn bid_logic <'info> (
     ctx: Context<'_, '_, '_, 'info, Bid<'info>>,
     buyer_price: u64,
     token_size: u64,
-    escrow_payment_bump : u8
+    escrow_payment_bump : u8,
 ) -> Result<()> {
     //NOTE:  extract variables from ctx
     let wallet = &ctx.accounts.wallet;
@@ -135,12 +146,30 @@ pub fn bid_logic <'info> (
     let rent = &ctx.accounts.rent;
     let payment_account = &ctx.accounts.payment_account;
     let system_program = &ctx.accounts.system_program;
+    let seller_trade_state = &mut ctx.accounts.seller_trade_state;
 
     // NOTE: populate buyer_trade_state
     buyer_trade_state.bidder = wallet.key();
     buyer_trade_state.bid_price = buyer_price;
     buyer_trade_state.ata = token_account.key();
 
+    // NOTE: update the highest bidder in seller_trade_state if the bidder is actually is one.
+    msg!("wallet pubkey => {:?}",  wallet.key());
+    msg!("some wallet pubkey => {:?}",  Some(wallet.key()));
+    msg!("bidder's buyer_price => {:?}",  buyer_price);
+    msg!("seller_trade_state.price => {:?}",  seller_trade_state.price);
+    msg!("seller_trade_state.price => {:?}",  seller_trade_state.price);
+
+    if let current_highest_bidder = Some(seller_trade_state.highest_bidder) {
+
+        if buyer_price > seller_trade_state.price {
+            seller_trade_state.highest_bidder =  Some(wallet.key());
+            seller_trade_state.price = buyer_price;
+        }
+    } else {
+        seller_trade_state.highest_bidder = Some(wallet.key());
+        seller_trade_state.price = buyer_price;
+    }
 
     // NOTE: add escrow_payment_account_bump to cookie_cutter
     cookie_cutter.escrow_payment_bump = escrow_payment_bump;

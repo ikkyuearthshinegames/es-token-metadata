@@ -1,6 +1,7 @@
 use crate::constants::*;
 use anchor_lang::prelude::*;
 use anchor_spl::token::Token;
+use solana_program::stake::state::Meta;
 
 #[repr(C)]
 #[derive(Accounts)]
@@ -100,6 +101,8 @@ pub struct Metadata {
     pub is_mutable: bool,
 }
 
+// Jee's comment#1: I suggested that we should drop the `seller_fee_basis_points` field since the revenue share logic will make no sense with the existing `share_insurance_token_amount` field.
+
 #[repr(C)]
 #[derive(AnchorSerialize, AnchorDeserialize, PartialEq, Debug, Clone)]
 pub struct Data {
@@ -130,6 +133,11 @@ pub struct Creator {
     // In weight
     pub share: u64,
 }
+
+
+
+// Jee's comment#1: I suggested that we should change the `Referrer` struct name to something like `Reference` since this struct holds a list of what I suppose is metadata's address. The some goes for the Data struct as well.
+
 
 #[repr(C)]
 #[derive(AnchorSerialize, AnchorDeserialize, PartialEq, Debug, Clone)]

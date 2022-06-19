@@ -17,7 +17,10 @@ pub struct CookieCutter {
     pub requires_sign_off: bool,
     pub can_change_sale_price: bool,
     pub escrow_payment_bump: u8,
+
 }
+
+
 
 #[repr(C)]
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Debug)]
@@ -35,7 +38,7 @@ pub struct CreateCookieCutterArgs {
 pub struct SellerTradeState {
     pub ata: Pubkey,
     pub price: u64,
-    pub highest_bidder: Pubkey,
+    pub highest_bidder: Option<Pubkey>,
     pub metadata_account: Pubkey
 }
 

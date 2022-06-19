@@ -203,3 +203,20 @@ export const getCookieCutterTradeState = async (
     throw new Error("cannot find getCookieCutterTradeState address");
   }
 };
+
+export const getCookieCutterBuyerEscrow = async (
+  cookieCutterKey: anchor.web3.PublicKey,
+  wallet: anchor.web3.PublicKey
+): Promise<[PublicKey, number]> => {
+  const cookieCutterBuyerEscrowAddress: [PublicKey, number] =
+    await anchor.web3.PublicKey.findProgramAddress(
+      [
+        Buffer.from(COOKIE_CUTTER),
+        cookieCutterKey.toBuffer(),
+        wallet.toBuffer(),
+      ],
+      COOKIE_CUTTER_PROGRAM_ID
+    );
+
+  return cookieCutterBuyerEscrowAddress;
+};

@@ -1,38 +1,30 @@
 import * as anchor from "@project-serum/anchor";
 import { base58_to_binary } from "base58-js";
-import { expect } from "chai";
+import { assert, expect } from "chai";
 import { initEsTokenMetadata } from "../es-token-metadata/utils/account";
-import { initCookieCutter } from "./utils/account";
-import { SellCookieCutterArgs } from "./utils/interfaces";
+import { addSOLToWallet, initCookieCutter } from "./utils/account";
+import { bid } from "./utils/bid";
+import {
+  BidCookieCutterArgs,
+  ExecuteSaleCookieCutterArgs,
+  SellCookieCutterArgs,
+} from "./utils/interfaces";
 import { sell } from "./utils/sell";
 import { showCookieCutter } from "./utils/show-cookie-cutter";
+import * as mocha from "mocha";
+import { executeSale } from "./utils/executeSale";
 
 describe("auction-house", () => {
   // Configure the client to use the local cluster.
   const env = "devnet";
 
-  const jeeKeypair: anchor.web3.Keypair = new anchor.web3.Keypair({
-    publicKey: new anchor.web3.PublicKey(
-      "ESz5bto4fkF68grek4cAhsfn7r9XBnG85RLZLkJRAzbE"
-    ).toBuffer(),
-    secretKey: base58_to_binary(
-      "4KVhGLcLJJqppjZb9MbDZSXCJp1Qh8Xr9sbVTeCboGrRRCaeJ2SvNkuGvs7kW5wPYJfSrjs75fcSLT3d86ncx9yN"
-    ),
-  });
-
-  const buyerKeypair: anchor.web3.Keypair = new anchor.web3.Keypair({
-    publicKey: new anchor.web3.PublicKey(
-      "6TmKV9CajmPkjMM4AWooTgw9QELQqGaQZwg8zWjaRNTr"
-    ).toBuffer(),
-    secretKey: base58_to_binary(
-      "55PtQoFR8QKxV1aFANHymTbLA9xWqgs7fQPxDvQSTE54WXS766vR1f1cmNKJzjLuhSTQtj5fEtSVQ49dh5opKWdW"
-    ),
-  });
-
   let _walletKeyPair: anchor.web3.Keypair;
   let _cookieCutterKey: anchor.web3.PublicKey;
   let _esTokenMetaDataKey: anchor.web3.PublicKey;
   let _mintKeypair: anchor.web3.Keypair;
+  let _buyerWalletKeypair: anchor.web3.Keypair;
+
+  const buyPrice = 1;
 
   before((done) => {
     (async () => {
@@ -69,14 +61,14 @@ describe("auction-house", () => {
         treasuryMint: null,
       });
     } catch (error) {
-      console.error("error while showCookieCutter => ", error);
+      console.error("error while showing CookieCutter => ", error);
     }
   });
 
   it("Should execute `sell` function", async () => {
     try {
       const sellArgs: SellCookieCutterArgs = {
-        buyPrice: 1,
+        buyPrice,
         env,
         cookieCutterKey: _cookieCutterKey,
         cookieCutterSigns: false,
@@ -87,7 +79,52 @@ describe("auction-house", () => {
 
       await sell(sellArgs);
     } catch (error) {
-      console.error("error while sell => ", error);
+      console.error("error while selling => ", error);
+    }
+  });
+
+  it("Should execute `bid` function", async () => {
+    try {
+      const buyerWalletKeyPair = anchor.web3.Keypair.generate();
+      _buyerWalletKeypair = buyerWalletKeyPair;
+      await addSOLToWallet(buyerWalletKeyPair);
+
+      const bidArgs: BidCookieCutterArgs = {
+        sellerWalletKeypair: _walletKeyPair,
+        sellPrice: buyPrice,
+        buyPrice: 1,
+        tokenSize: 1,
+        env,
+        cookieCutterKey: _cookieCutterKey,
+        mintKey: _mintKeypair.publicKey,
+        walletKeypair: buyerWalletKeyPair,
+        paymentAccountKeypair: buyerWalletKeyPair,
+      };
+
+      await bid(bidArgs);
+    } catch (error) {
+      console.error("error while bidding => ", error);
+      assert.ok(false);
+    }
+  });
+
+  it("Should execute `execute_sale` function", async () => {
+    try {
+      const executeSaleArgs: ExecuteSaleCookieCutterArgs = {
+        sellerWalletKeypair: _walletKeyPair,
+        sellPrice: buyPrice,
+        buyPrice: 1,
+        tokenSize: 1,
+        env,
+        cookieCutterKey: _cookieCutterKey,
+        mintKey: _mintKeypair.publicKey,
+        buyerWalletKeypair: _buyerWalletKeypair,
+      };
+
+      await executeSale(executeSaleArgs);
+    } catch (error) {
+      console.error("error while executing sale => ", error);
+      assert.ok(false);
     }
   });
 });

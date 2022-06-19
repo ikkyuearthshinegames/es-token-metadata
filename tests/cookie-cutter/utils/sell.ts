@@ -30,6 +30,10 @@ export const sell = async (args: SellCookieCutterArgs) => {
     walletKeypair,
   }: SellCookieCutterArgs = args;
 
+  console.log("----------- --------------------- ------------");
+  console.log("----------- SELLING Cookie Cutter   ------------");
+  console.log("----------- --------------------- ------------");
+
   console.log(
     "[sell] || walletKeypair => ",
     walletKeypair.publicKey.toBase58()

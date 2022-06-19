@@ -16,4 +16,7 @@ pub enum CookieCutterError {
 
     #[msg("The mathematic calculation returns invalid value")]
     NumericalOverflow,
+
+    #[msg("The highest bidder is not presented in the seller trade state")]
+    NoHighestBidder,
 }

@@ -199,3 +199,16 @@ pub fn assert_initialized<T: Pack + IsInitialized>(account_info: &AccountInfo) -
         err!(CookieCutterError::UninitializedAccount)
     }
 }
+
+pub fn rent_checked_sub(escrow_account: AccountInfo, diff: u64) -> Result<u64> {
+    let rent_minimum = (Rent::get()?).minimum_balance((escrow_account.data_len()));
+    let account_lamports = escrow_account
+        .lamports()
+        .checked_sub(diff)
+        .ok_or(CookieCutterError::NumericalOverflow)?;
+    if account_lamports < rent_minimum {
+        Ok(escrow_account.lamports() - rent_minimum)
+    } else {
+        Ok(diff)
+    }
+}

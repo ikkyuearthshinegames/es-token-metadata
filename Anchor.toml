@@ -18,14 +18,11 @@ wallet = "~/.config/solana/id.json"
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 
-gay-build = "anchor build --program-name gay_dungeon"
-
-gay-deploy-w-idl = "anchor build --program-name gay_dungeon && anchor deploy --program-name gay_dungeon && anchor idl upgrade --filepath target/idl/gay_dungeon.json Bz4repUbACRtNKsrTZUhgfNzXKbsu6JcLzawHFqoSz3X"
-gay-get-idl = "anchor idl fetch Bz4repUbACRtNKsrTZUhgfNzXKbsu6JcLzawHFqoSz3X"
-gay-upgrade-idl = "anchor idl upgrade --filepath target/idl/gay_dungeon.json Bz4repUbACRtNKsrTZUhgfNzXKbsu6JcLzawHFqoSz3X"
 
 deploy-cookie = "anchor deploy -p cookie-cutter"
 upgrade-idl-cookie = "anchor idl upgrade --filepath target/idl/cookie_cutter.json 5ZCWy1KnjskpikJGTrbRVNLw6pyRmS1GjbQfqwwqgG5X"
+get-idl-cookie = "anchor idl fetch 5ZCWy1KnjskpikJGTrbRVNLw6pyRmS1GjbQfqwwqgG5X"
+
 
 
 build-es = "anchor build -p es_token_metadata"

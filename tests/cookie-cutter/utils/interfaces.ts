@@ -8,6 +8,7 @@ import {
 } from "@solana/web3.js";
 import * as anchor from "@project-serum/anchor";
 
+//#region CreateCookieCutter
 export type CreateCookieCutterArgs = {
   keypair: Keypair;
   env: string;
@@ -43,6 +44,7 @@ export type CreateCookieCutterAccountArgs = {
   ataProgram: PublicKey;
   rent: any;
 };
+//#endregion
 
 export type CookieCutterObject = {
   cookieCutterFeeAccount: PublicKey;
@@ -61,6 +63,7 @@ export type CookieCutterObject = {
   escrowPaymentBump: number;
 };
 
+//#region SellCookieCutter
 export type SellCookieCutterArgs = {
   walletKeypair: Keypair;
   env: string;
@@ -100,4 +103,69 @@ export type SellCookieCutterAccountArgs = {
   systemProgram: PublicKey;
   rent: any;
   programAsSigner: PublicKey;
+};
+
+//#endregion
+
+export type BidCookieCutterArgs = {
+  walletKeypair: Keypair;
+  paymentAccountKeypair: Keypair;
+  env: string;
+  cookieCutterKey: anchor.web3.PublicKey;
+  buyPrice: number;
+  sellPrice: number;
+  sellerWalletKeypair: anchor.web3.Keypair;
+  mintKey: anchor.web3.PublicKey;
+  tokenSize: number;
+};
+
+export type BidCookieCutterAccountArgs = {
+  seller: PublicKey;
+  wallet: PublicKey;
+  paymentAccount: PublicKey;
+  treasuryMint: PublicKey;
+  tokenAccount: PublicKey;
+  metadataAccount: PublicKey;
+  authority: PublicKey;
+  escrowPaymentAccount: PublicKey;
+  buyerTradeState: PublicKey;
+  sellerTradeState: PublicKey;
+  cookieCutter: PublicKey;
+  cookieCutterFeeAccount: PublicKey;
+  tokenProgram: PublicKey;
+  systemProgram: PublicKey;
+  rent: any;
+};
+
+export type ExecuteSaleCookieCutterArgs = {
+  env: string;
+  buyerWalletKeypair: Keypair;
+  sellerWalletKeypair: Keypair;
+  sellPrice: number;
+  buyPrice: number;
+  mintKey: anchor.web3.PublicKey;
+  tokenSize: number;
+  cookieCutterKey: PublicKey;
+};
+
+export type ExecuteSaleCookieCutterAccountArgs = {
+  buyer: PublicKey;
+  seller: PublicKey;
+  tokenAccount: PublicKey;
+  tokenMint: PublicKey;
+  metadataAccount: PublicKey;
+  escrowPaymentAccount: PublicKey;
+  sellerPaymentReceiptAccount: PublicKey;
+  buyerReceiptTokenAccount: PublicKey;
+  authority: PublicKey;
+  cookieCutter: PublicKey;
+  cookieCutterFeeAccount: PublicKey;
+  cookieCutterTreasury: PublicKey;
+  buyerTradeState: PublicKey;
+  sellerTradeState: PublicKey;
+  tokenProgram: PublicKey;
+  systemProgram: PublicKey;
+  ataProgram: PublicKey;
+  programAsSigner: PublicKey;
+  rent: PublicKey;
 };

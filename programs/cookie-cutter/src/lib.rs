@@ -58,9 +58,24 @@ pub mod cookie_cutter {
         ctx : Context<'_, '_,'_,'info,  Bid<'info>>,
         buyer_price : u64,
         token_size : u64,
-        escrow_payment_bump : u8
+        escrow_payment_bump : u8,
+        seller_trade_state_bump: u8
     ) -> Result<()> {
         bid::bid(ctx,buyer_price,token_size,escrow_payment_bump)
     }
-}
 
+    pub fn execute_sale<'info> (
+        ctx : Context<'_, '_,'_,'info,  ExecuteSale<'info>>,
+        program_as_signer_bump: u8,
+        buyer_price: u64,
+        token_size: u64,
+    ) -> Result<()> {
+
+        execute_sale::execute_sale(
+            ctx,
+            program_as_signer_bump,
+            buyer_price,
+            token_size,
+        )
+    }
+}
