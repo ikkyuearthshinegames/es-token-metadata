@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 
 pub mod bid;
 pub mod cancel;
-pub mod create_gay_dungeon;
+pub mod create_cookie_cutter;
 pub mod execute_sale;
 pub mod sell;
 pub mod constants;
@@ -13,7 +13,7 @@ pub mod utils;
 
 use crate::bid::*;
 use crate::cancel::*;
-use crate::create_gay_dungeon::*;
+use crate::create_cookie_cutter::*;
 use crate::execute_sale::*;
 use crate::sell::*;
 
@@ -23,19 +23,19 @@ use crate::state::*;
 use crate::utils::*;
 
 
-declare_id!("Bz4repUbACRtNKsrTZUhgfNzXKbsu6JcLzawHFqoSz3X");
+declare_id!("5ZCWy1KnjskpikJGTrbRVNLw6pyRmS1GjbQfqwwqgG5X");
 
 #[program]
-pub mod gay_dungeon {
+pub mod cookie_cutter {
     use super::*;
 
-    pub fn create_gay_dungeon<'info> (
-        ctx: Context<'_, '_,'_,'info, CreateGayDungeon<'info>>, 
-        args : CreateGayDungeonArgs
+    pub fn create_cookie_cutter<'info> (
+        ctx: Context<'_, '_,'_,'info, CreateCookieCutter<'info>>, 
+        args : CreateCookieCutterArgs
     ) -> Result<()> {
 
         msg!("{:?}", es_token_metadata::id());
-        create_gay_dungeon::create_gay_dungeon(ctx, args)
+        create_cookie_cutter::create_cookie_cutter(ctx, args)
     }
 
     pub fn sell <'info> (

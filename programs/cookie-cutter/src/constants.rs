@@ -1,12 +1,12 @@
 
-pub const PREFIX : &str = "gay_dungeon";
+pub const PREFIX : &str = "cookie_cutter";
 pub const FEE_PAYER: &str = "fee_payer";
 pub const TREASURY: &str = "treasury";
 pub const SIGNER: &str = "signer";
 
 
 
-pub const GAY_DUNGEON_SIZE: usize = 
+pub const COOKIE_CUTTER_SIZE: usize = 
 8 +                                                         // key
 32 +                                                        // fee Payer
 32 +                                                        // treasury
@@ -27,12 +27,12 @@ pub const GAY_DUNGEON_SIZE: usize =
 203                                                         // padding
 ;
 
-pub const GAY_DUNGEON_FEE_PAYER_SIZE: usize = 
+pub const COOKIE_CUTTER_FEE_PAYER_SIZE: usize = 
 4       // 
 + 32    // public key
 ;
 
-pub const GAY_DUNGEON_TREASURY_SIZE: usize = 
+pub const COOKIE_CUTTER_TREASURY_SIZE: usize = 
 4       // default allocation
 + 32    // public key
 ;

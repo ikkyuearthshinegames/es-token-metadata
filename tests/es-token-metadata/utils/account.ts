@@ -5,7 +5,7 @@ import {
   ES_TOKEN_METADATA_PROGRAM,
   ES_TOKEN_METADATA_PROGRAM_PREFIX,
 } from "./constant";
-import { addSOLToWallet } from "../../gay-dungeon/utils/account";
+import { addSOLToWallet } from "../../cookie-cutter/utils/account";
 
 import { mint } from "./mint";
 import { createEsTokenMetadata } from "./create-es-token-metadata";

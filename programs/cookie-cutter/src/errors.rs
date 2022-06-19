@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 #[error_code]
-pub enum GayDungeonError {
+pub enum CookieCutterError {
     #[msg("The account is not mutable")]
     NotMutableAccount,
 

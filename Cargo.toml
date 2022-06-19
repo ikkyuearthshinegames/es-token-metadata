@@ -1,6 +1,5 @@
 [workspace]
 members = [
-    "programs/*",
-    "programs/gay-dungeon",
+    "programs/cookie-cutter",
     "programs/es-token-metadata"
 ]

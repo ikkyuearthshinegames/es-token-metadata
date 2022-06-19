@@ -1,7 +1,7 @@
 import {
-  CreateGayDungeonAccountArgs,
-  CreateGayDungeonArgs,
-  CreateGayDungeonRPCArgs,
+  CreateCookieCutterAccountArgs,
+  CreateCookieCutterArgs,
+  CreateCookieCutterRPCArgs,
 } from "./interfaces";
 import * as anchor from "@project-serum/anchor";
 import {
@@ -15,10 +15,10 @@ import {
 } from "@solana/web3.js";
 import {
   getAtaForMint,
-  getGayDungeon,
-  getGayDungeonFeeAccount,
-  getGayDungeonTreasuryAccount,
-  loadGayDungeonProgram,
+  getCookieCutter,
+  getCookieCutterFeeAccount,
+  getCookieCutterTreasuryAccount,
+  loadCookieCutterProgram,
 } from "./account";
 import {
   FEE_DESTINATION_WALLET_KEY,
@@ -34,8 +34,8 @@ import {
   createRevokeInstruction,
 } from "@solana/spl-token";
 
-export const createGayDungeon = async (
-  args: CreateGayDungeonArgs
+export const createCookieCutter = async (
+  args: CreateCookieCutterArgs
 ): Promise<PublicKey> => {
   const {
     canChangeSalePrice,
@@ -46,11 +46,17 @@ export const createGayDungeon = async (
     sellerFeeBasisPoints,
     treasuryMint,
     treasuryWithdrawalDestination,
-  }: CreateGayDungeonArgs = args;
+  }: CreateCookieCutterArgs = args;
 
-  const gayProgram: anchor.Program = await loadGayDungeonProgram(keypair, env);
+  const cookieCutterProgram: anchor.Program = await loadCookieCutterProgram(
+    keypair,
+    env
+  );
 
-  console.log("[utils] [createGayDungeon] gayProgram =>", gayProgram);
+  console.log(
+    "[utils] [createCookieCutter] cookieCutterProgram =>",
+    cookieCutterProgram
+  );
 
   const treasuryWithdrawalDestinationKey = treasuryWithdrawalDestination
     ? treasuryWithdrawalDestination
@@ -71,65 +77,65 @@ export const createGayDungeon = async (
       )[0];
 
   console.log(
-    "[utils] [createGayDungeon] treasuryWithdrawalDestinationKey =>",
+    "[utils] [createCookieCutter] treasuryWithdrawalDestinationKey =>",
     treasuryWithdrawalDestinationKey.toBase58()
   );
   console.log(
-    "[utils] [createGayDungeon] feeWithdrawalDestinationKey =>",
+    "[utils] [createCookieCutter] feeWithdrawalDestinationKey =>",
     feeWithdrawalDestinationKey.toBase58()
   );
   console.log(
-    "[utils] [createGayDungeon] treasuryMintKey =>",
+    "[utils] [createCookieCutter] treasuryMintKey =>",
     treasuryMintKey.toBase58()
   );
   console.log(
-    "[utils] [createGayDungeon] treasuryWithdrawalDestinationAtaKey =>",
+    "[utils] [createCookieCutter] treasuryWithdrawalDestinationAtaKey =>",
     treasuryWithdrawalDestinationAtaKey.toBase58()
   );
 
-  const [gayDungeon, gayDungeonBump] = await getGayDungeon(
+  const [cookieCutter, cookieCutterBump] = await getCookieCutter(
     keypair.publicKey,
     treasuryMintKey
   );
 
-  const [feeAccount, feeAccountBump] = await getGayDungeonFeeAccount(
-    gayDungeon
+  const [feeAccount, feeAccountBump] = await getCookieCutterFeeAccount(
+    cookieCutter
   );
 
   const [treasuryAccount, treasuryAccountBump] =
-    await getGayDungeonTreasuryAccount(gayDungeon);
+    await getCookieCutterTreasuryAccount(cookieCutter);
 
-  console.log("[utils] [createGayDungeon] [gayDungeon, gayDungeonBump]  =>", [
-    gayDungeon.toBase58(),
-    gayDungeonBump,
-  ]);
+  console.log(
+    "[utils] [createCookieCutter] [cookieCutter, cookieCutterBump]  =>",
+    [cookieCutter.toBase58(), cookieCutterBump]
+  );
 
-  console.log("[utils] [createGayDungeon] [feeAccount, feeAccountBump]  =>", [
+  console.log("[utils] [createCookieCutter] [feeAccount, feeAccountBump]  =>", [
     feeAccount.toBase58(),
     feeAccountBump,
   ]);
 
   console.log(
-    "[utils] [createGayDungeon] [treasuryAccount, treasuryAccountBump] =>",
+    "[utils] [createCookieCutter] [treasuryAccount, treasuryAccountBump] =>",
     [treasuryAccount.toBase58(), treasuryAccountBump]
   );
 
-  const rpcArgs: CreateGayDungeonRPCArgs = {
+  const rpcArgs: CreateCookieCutterRPCArgs = {
     canChangeSalePrice,
-    gayDungeonBump,
-    gayDungeonFeePayerBump: feeAccountBump,
-    gayDungeonTreasuryBump: treasuryAccountBump,
+    cookieCutterBump,
+    cookieCutterFeePayerBump: feeAccountBump,
+    cookieCutterTreasuryBump: treasuryAccountBump,
     requiresSignOff,
     sellerFeeBasisPoints,
   };
 
-  const rpcAccount: CreateGayDungeonAccountArgs = {
+  const rpcAccount: CreateCookieCutterAccountArgs = {
     ataProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
     authority: keypair.publicKey,
     feeWithdrawalDestination: feeWithdrawalDestinationKey,
-    gayDungeon,
-    gayDungeonFeeAccount: feeAccount,
-    gayDungeonTreasury: treasuryAccount,
+    cookieCutter,
+    cookieCutterFeeAccount: feeAccount,
+    cookieCutterTreasury: treasuryAccount,
     payer: keypair.publicKey,
     rent: anchor.web3.SYSVAR_RENT_PUBKEY,
     systemProgram: anchor.web3.SystemProgram.programId,
@@ -139,16 +145,16 @@ export const createGayDungeon = async (
     treasuryWithdrawalDestinationOwner: treasuryWithdrawalDestinationKey,
   };
 
-  console.log("[utils] [createGayDungeon] rpcArgs =>", rpcArgs);
-  console.log("[utils] [createGayDungeon] rpcAccount =>", rpcAccount);
+  console.log("[utils] [createCookieCutter] rpcArgs =>", rpcArgs);
+  console.log("[utils] [createCookieCutter] rpcAccount =>", rpcAccount);
 
-  const tx = await gayProgram.methods
-    .createGayDungeon(rpcArgs as any)
+  const tx = await cookieCutterProgram.methods
+    .createCookieCutter(rpcArgs as any)
     .accounts(rpcAccount as any)
     .signers([keypair])
     .rpc();
 
-  console.log("[utils] [createGayDungeon] tx =>", tx);
+  console.log("[utils] [createCookieCutter] tx =>", tx);
 
-  return gayDungeon;
+  return cookieCutter;
 };

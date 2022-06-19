@@ -12,20 +12,23 @@ import {
 import {
   FEE_DESTINATION_WALLET_KEY,
   FEE_PAYER,
-  GAY_DUNGEON,
-  GAY_DUNGEON_PROGRAM_ID,
+  COOKIE_CUTTER,
+  COOKIE_CUTTER_PROGRAM_ID,
   SIGNER,
   SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
   TOKEN_PROGRAM_ID,
   TREASURY,
   TREASURY_WALLET_KEY,
 } from "./constants";
-import { createGayDungeon } from "./create-gay-dungeon";
-import { CreateGayDungeonArgs, GayDungeonTradeStateSeeds } from "./interfaces";
+import { createCookieCutter } from "./create-cookie-cutter";
+import {
+  CreateCookieCutterArgs,
+  CookieCutterTradeStateSeeds,
+} from "./interfaces";
 import { base58_to_binary } from "base58-js";
 import { ES_TOKEN_METADATA_PROGRAM } from "../../es-token-metadata/utils/constant";
 
-export const loadGayDungeonProgram = async (
+export const loadCookieCutterProgram = async (
   walletKeyPair: Keypair,
   env: string,
   customRpcUrl?: string
@@ -44,10 +47,10 @@ export const loadGayDungeonProgram = async (
     preflightCommitment: "confirmed",
   });
 
-  console.log("fetching IDL using program ID => ", GAY_DUNGEON_PROGRAM_ID);
-  const idl = await anchor.Program.fetchIdl(GAY_DUNGEON_PROGRAM_ID, provider);
+  console.log("fetching IDL using program ID => ", COOKIE_CUTTER_PROGRAM_ID);
+  const idl = await anchor.Program.fetchIdl(COOKIE_CUTTER_PROGRAM_ID, provider);
 
-  return new anchor.Program(idl, GAY_DUNGEON_PROGRAM_ID, provider);
+  return new anchor.Program(idl, COOKIE_CUTTER_PROGRAM_ID, provider);
 };
 
 export const addSOLToWallet = async (wallet: Keypair) => {
@@ -72,15 +75,15 @@ export const addSOLToWallet = async (wallet: Keypair) => {
   }
 };
 
-export const initGayDungeon = async (): Promise<{
+export const initCookieCutter = async (): Promise<{
   walletKeyPair: anchor.web3.Keypair;
-  gayDungeon: PublicKey;
+  cookieCutter: PublicKey;
 }> => {
   const walletKeyPair = anchor.web3.Keypair.generate();
 
   await addSOLToWallet(walletKeyPair);
 
-  const gayDungeon = await createGayDungeon({
+  const cookieCutter = await createCookieCutter({
     keypair: walletKeyPair,
     env: "devnet",
     sellerFeeBasisPoints: 100,
@@ -92,11 +95,11 @@ export const initGayDungeon = async (): Promise<{
   });
 
   console.log(
-    "[ account ] [ initGayDungeon ] gayDungeon.toBase58 => ",
-    gayDungeon.toBase58()
+    "[ account ] [ initCookieCutter ] cookieCutter.toBase58 => ",
+    cookieCutter.toBase58()
   );
 
-  return { walletKeyPair, gayDungeon };
+  return { walletKeyPair, cookieCutter };
 };
 
 export const getAtaForMint = async (
@@ -111,81 +114,92 @@ export const getAtaForMint = async (
   return ata;
 };
 
-export const getGayDungeon = async (
+export const getCookieCutter = async (
   creator: anchor.web3.PublicKey,
   treasuryMint: anchor.web3.PublicKey
 ): Promise<[PublicKey, number]> => {
   try {
     const gd = await anchor.web3.PublicKey.findProgramAddress(
-      [Buffer.from(GAY_DUNGEON), creator.toBuffer(), treasuryMint.toBuffer()],
-      GAY_DUNGEON_PROGRAM_ID
+      [Buffer.from(COOKIE_CUTTER), creator.toBuffer(), treasuryMint.toBuffer()],
+      COOKIE_CUTTER_PROGRAM_ID
     );
 
     return gd;
   } catch (error) {
-    console.log("[account] [getGayDungeon] error in getGayDungeon => ", error);
+    console.log(
+      "[account] [getCookieCutter] error in getCookieCutter => ",
+      error
+    );
   }
 };
 
-export const getGayDungeonFeeAccount = async (
-  gayDungeon: anchor.web3.PublicKey
+export const getCookieCutterFeeAccount = async (
+  cookieCutter: anchor.web3.PublicKey
 ): Promise<[PublicKey, number]> => {
   const gdFeeAcct = await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from(GAY_DUNGEON), gayDungeon.toBuffer(), Buffer.from(FEE_PAYER)],
-    GAY_DUNGEON_PROGRAM_ID
+    [
+      Buffer.from(COOKIE_CUTTER),
+      cookieCutter.toBuffer(),
+      Buffer.from(FEE_PAYER),
+    ],
+    COOKIE_CUTTER_PROGRAM_ID
   );
 
   return gdFeeAcct;
 };
 
-export const getGayDungeonTreasuryAccount = async (
-  gayDungeon: anchor.web3.PublicKey
+export const getCookieCutterTreasuryAccount = async (
+  cookieCutter: anchor.web3.PublicKey
 ): Promise<[PublicKey, number]> => {
   const gdTAcct = await anchor.web3.PublicKey.findProgramAddress(
-    [Buffer.from(GAY_DUNGEON), gayDungeon.toBuffer(), Buffer.from(TREASURY)],
-    GAY_DUNGEON_PROGRAM_ID
+    [
+      Buffer.from(COOKIE_CUTTER),
+      cookieCutter.toBuffer(),
+      Buffer.from(TREASURY),
+    ],
+    COOKIE_CUTTER_PROGRAM_ID
   );
 
   return gdTAcct;
 };
 
-export const getGayDungeonProgramAsSigner = async (): Promise<
+export const getCookieCutterProgramAsSigner = async (): Promise<
   [PublicKey, number]
 > => {
   try {
-    const gayDungeonProgramAsSignerAddress: [anchor.web3.PublicKey, number] =
+    const cookieCutterProgramAsSignerAddress: [anchor.web3.PublicKey, number] =
       await anchor.web3.PublicKey.findProgramAddress(
-        [Buffer.from(GAY_DUNGEON), Buffer.from(SIGNER)],
-        GAY_DUNGEON_PROGRAM_ID
+        [Buffer.from(COOKIE_CUTTER), Buffer.from(SIGNER)],
+        COOKIE_CUTTER_PROGRAM_ID
       );
 
-    return gayDungeonProgramAsSignerAddress;
+    return cookieCutterProgramAsSignerAddress;
   } catch (error) {
-    throw new Error("cannot find getGayDungeonProgramAsSigner address");
+    throw new Error("cannot find getCookieCutterProgramAsSigner address");
   }
 };
 
-export const getGayDungeonTradeState = async (
-  seeds: GayDungeonTradeStateSeeds
+export const getCookieCutterTradeState = async (
+  seeds: CookieCutterTradeStateSeeds
 ): Promise<[PublicKey, number]> => {
   try {
-    const gayDungeonTradeStateAddress: [anchor.web3.PublicKey, number] =
+    const cookieCutterTradeStateAddress: [anchor.web3.PublicKey, number] =
       await anchor.web3.PublicKey.findProgramAddress(
         [
-          Buffer.from(GAY_DUNGEON),
+          Buffer.from(COOKIE_CUTTER),
           seeds.walletKey.toBuffer(),
-          seeds.gayDungeonKey.toBuffer(),
+          seeds.cookieCutterKey.toBuffer(),
           seeds.tokenAccount.toBuffer(),
           seeds.treasuryMint.toBuffer(),
           seeds.tokenMint.toBuffer(),
           seeds.buyPrice.toBuffer("le", 8),
           seeds.tokenSize.toBuffer("le", 8),
         ],
-        GAY_DUNGEON_PROGRAM_ID
+        COOKIE_CUTTER_PROGRAM_ID
       );
 
-    return gayDungeonTradeStateAddress;
+    return cookieCutterTradeStateAddress;
   } catch (error) {
-    throw new Error("cannot find getGayDungeonTradeState address");
+    throw new Error("cannot find getCookieCutterTradeState address");
   }
 };

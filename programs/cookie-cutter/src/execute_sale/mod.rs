@@ -46,10 +46,10 @@ pub struct ExecuteSale <'info> {
         mut,
         seeds = [
             PREFIX.as_bytes(),
-            gay_dungeon.key().as_ref(),
+            cookie_cutter.key().as_ref(),
             buyer.key().as_ref()
         ],
-        bump = gay_dungeon.escrow_payment_bump
+        bump = cookie_cutter.escrow_payment_bump
     )]
     pub escrow_payment_account: UncheckedAccount<'info>,
 
@@ -73,38 +73,38 @@ pub struct ExecuteSale <'info> {
         mut,
         seeds = [
             PREFIX.as_bytes(), 
-            gay_dungeon.creator.as_ref(), 
-            gay_dungeon.treasury_mint.as_ref()
+            cookie_cutter.creator.as_ref(), 
+            cookie_cutter.treasury_mint.as_ref()
         ], 
-        bump = gay_dungeon.bump,
+        bump = cookie_cutter.bump,
         has_one = authority, 
-        has_one = gay_dungeon_fee_account
+        has_one = cookie_cutter_fee_account
     )]
-    pub gay_dungeon: Box<Account<'info, GayDungeon>>,
+    pub cookie_cutter: Box<Account<'info, CookieCutter>>,
 
      /// CHECK: validate via seeds
      #[account(
         mut,
         seeds = [
             PREFIX.as_bytes(),
-            gay_dungeon.key().as_ref(),
+            cookie_cutter.key().as_ref(),
             FEE_PAYER.as_bytes()
         ],
-        bump = gay_dungeon.fee_payer_bump
+        bump = cookie_cutter.fee_payer_bump
     )]
-    pub gay_dungeon_fee_account :  UncheckedAccount<'info>,
+    pub cookie_cutter_fee_account :  UncheckedAccount<'info>,
 
     /// CHECK: validate via seeds
     #[account(
         mut,
         seeds = [
             PREFIX.as_bytes(),
-            gay_dungeon.key().as_ref(),
+            cookie_cutter.key().as_ref(),
             TREASURY.as_bytes()
         ],
-        bump = gay_dungeon.treasury_bump
+        bump = cookie_cutter.treasury_bump
     )]
-    pub gay_dungeon_treasury: UncheckedAccount<'info>,
+    pub cookie_cutter_treasury: UncheckedAccount<'info>,
 
 
      /// CHECK: Not dangerous. Validate in execute_sale_logic.
@@ -114,9 +114,9 @@ pub struct ExecuteSale <'info> {
         seeds = [
             PREFIX.as_bytes(),
             buyer.key().as_ref(),
-            gay_dungeon.key().as_ref(),
+            cookie_cutter.key().as_ref(),
             token_account.key().as_ref(),
-            gay_dungeon.treasury_mint.key().as_ref(),
+            cookie_cutter.treasury_mint.key().as_ref(),
             token_account.mint.as_ref(),
             buyer_price.to_le_bytes().as_ref(),
             token_size.to_le_bytes().as_ref()
@@ -132,9 +132,9 @@ pub struct ExecuteSale <'info> {
         seeds = [
             PREFIX.as_bytes(),
             seller.key().as_ref(),
-            gay_dungeon.key().as_ref(),
+            cookie_cutter.key().as_ref(),
             token_account.key().as_ref(),
-            gay_dungeon.treasury_mint.as_ref(),
+            cookie_cutter.treasury_mint.as_ref(),
             token_account.mint.as_ref(),
             &buyer_price.to_le_bytes(),
             &token_size.to_le_bytes()

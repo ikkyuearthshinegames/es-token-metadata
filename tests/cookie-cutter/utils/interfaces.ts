@@ -8,7 +8,7 @@ import {
 } from "@solana/web3.js";
 import * as anchor from "@project-serum/anchor";
 
-export type CreateGayDungeonArgs = {
+export type CreateCookieCutterArgs = {
   keypair: Keypair;
   env: string;
   sellerFeeBasisPoints: number;
@@ -19,34 +19,34 @@ export type CreateGayDungeonArgs = {
   treasuryMint: PublicKey;
 };
 
-export type CreateGayDungeonRPCArgs = {
-  gayDungeonBump: number;
-  gayDungeonTreasuryBump: number;
-  gayDungeonFeePayerBump: number;
+export type CreateCookieCutterRPCArgs = {
+  cookieCutterBump: number;
+  cookieCutterTreasuryBump: number;
+  cookieCutterFeePayerBump: number;
   sellerFeeBasisPoints: number;
   requiresSignOff: boolean;
   canChangeSalePrice: boolean;
 };
 
-export type CreateGayDungeonAccountArgs = {
+export type CreateCookieCutterAccountArgs = {
   treasuryMint: PublicKey;
   payer: PublicKey;
   authority: PublicKey;
   feeWithdrawalDestination: PublicKey;
   treasuryWithdrawalDestination: PublicKey;
   treasuryWithdrawalDestinationOwner: PublicKey;
-  gayDungeon: PublicKey;
-  gayDungeonFeeAccount: PublicKey;
-  gayDungeonTreasury: PublicKey;
+  cookieCutter: PublicKey;
+  cookieCutterFeeAccount: PublicKey;
+  cookieCutterTreasury: PublicKey;
   systemProgram: PublicKey;
   tokenProgram: PublicKey;
   ataProgram: PublicKey;
   rent: any;
 };
 
-export type GayDungeonObject = {
-  gayDungeonFeeAccount: PublicKey;
-  gayDungeonTreasury: PublicKey;
+export type CookieCutterObject = {
+  cookieCutterFeeAccount: PublicKey;
+  cookieCutterTreasury: PublicKey;
   treasuryWithdrawalDestination: PublicKey;
   feeWithdrawalDestination: PublicKey;
   treasuryMint: PublicKey;
@@ -61,18 +61,18 @@ export type GayDungeonObject = {
   escrowPaymentBump: number;
 };
 
-export type SellGayDungeonArgs = {
+export type SellCookieCutterArgs = {
   walletKeypair: Keypair;
   env: string;
-  gayDungeonKey: anchor.web3.PublicKey;
+  cookieCutterKey: anchor.web3.PublicKey;
   buyPrice: number;
   mintKey: anchor.web3.PublicKey;
   tokenSize: number;
-  gayDungeonSigns: boolean;
+  cookieCutterSigns: boolean;
 };
 
-export type GayDungeonTradeStateSeeds = {
-  gayDungeonKey: anchor.web3.PublicKey;
+export type CookieCutterTradeStateSeeds = {
+  cookieCutterKey: anchor.web3.PublicKey;
   walletKey: anchor.web3.PublicKey;
   tokenAccount: anchor.web3.PublicKey;
   treasuryMint: anchor.web3.PublicKey;
@@ -81,20 +81,20 @@ export type GayDungeonTradeStateSeeds = {
   buyPrice: anchor.BN;
 };
 
-export type SellGayDungeonRPCArgs = {
+export type SellCookieCutterRPCArgs = {
   metadataBump: number;
   programAsSignerBump: number;
   buyerPrice: anchor.BN;
   tokenSize: anchor.BN;
 };
 
-export type SellGayDungeonAccountArgs = {
+export type SellCookieCutterAccountArgs = {
   wallet: PublicKey;
   tokenAccount: PublicKey;
   metadataAccount: PublicKey;
   authority: PublicKey;
-  gayDungeon: PublicKey;
-  gayDungeonFeeAccount: PublicKey;
+  cookieCutter: PublicKey;
+  cookieCutterFeeAccount: PublicKey;
   sellerTradeState: PublicKey;
   tokenProgram: PublicKey;
   systemProgram: PublicKey;

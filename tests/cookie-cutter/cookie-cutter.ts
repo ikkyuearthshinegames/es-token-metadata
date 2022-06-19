@@ -2,10 +2,10 @@ import * as anchor from "@project-serum/anchor";
 import { base58_to_binary } from "base58-js";
 import { expect } from "chai";
 import { initEsTokenMetadata } from "../es-token-metadata/utils/account";
-import { initGayDungeon } from "./utils/account";
-import { SellGayDungeonArgs } from "./utils/interfaces";
+import { initCookieCutter } from "./utils/account";
+import { SellCookieCutterArgs } from "./utils/interfaces";
 import { sell } from "./utils/sell";
-import { showGayDungeon } from "./utils/show-gay-dungeon";
+import { showCookieCutter } from "./utils/show-cookie-cutter";
 
 describe("auction-house", () => {
   // Configure the client to use the local cluster.
@@ -30,19 +30,19 @@ describe("auction-house", () => {
   });
 
   let _walletKeyPair: anchor.web3.Keypair;
-  let _gayDungeonKey: anchor.web3.PublicKey;
+  let _cookieCutterKey: anchor.web3.PublicKey;
   let _esTokenMetaDataKey: anchor.web3.PublicKey;
   let _mintKeypair: anchor.web3.Keypair;
 
   before((done) => {
     (async () => {
       try {
-        const { walletKeyPair, gayDungeon } = await initGayDungeon();
+        const { walletKeyPair, cookieCutter } = await initCookieCutter();
 
         _walletKeyPair = walletKeyPair;
-        _gayDungeonKey = gayDungeon;
+        _cookieCutterKey = cookieCutter;
       } catch (error) {
-        console.error("error while initGayDungeon => ", error);
+        console.error("error while initCookieCutter => ", error);
       }
 
       try {
@@ -60,26 +60,26 @@ describe("auction-house", () => {
     })();
   });
 
-  it("Should successfully create Gay Dungeon", async () => {
+  it("Should successfully create Cookie Cutter", async () => {
     try {
-      await showGayDungeon({
+      await showCookieCutter({
         walletKeyPair: _walletKeyPair,
         env: env,
-        gayDungeonKey: _gayDungeonKey,
+        cookieCutterKey: _cookieCutterKey,
         treasuryMint: null,
       });
     } catch (error) {
-      console.error("error while showGayDungeon => ", error);
+      console.error("error while showCookieCutter => ", error);
     }
   });
 
   it("Should execute `sell` function", async () => {
     try {
-      const sellArgs: SellGayDungeonArgs = {
+      const sellArgs: SellCookieCutterArgs = {
         buyPrice: 1,
         env,
-        gayDungeonKey: _gayDungeonKey,
-        gayDungeonSigns: false,
+        cookieCutterKey: _cookieCutterKey,
+        cookieCutterSigns: false,
         mintKey: _mintKeypair.publicKey,
         tokenSize: 1,
         walletKeypair: _walletKeyPair,

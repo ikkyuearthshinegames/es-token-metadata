@@ -41,35 +41,35 @@ pub struct Sell <'info> {
         mut,
         seeds = [
             PREFIX.as_bytes(), 
-            gay_dungeon.creator.as_ref(), 
-            gay_dungeon.treasury_mint.as_ref()
+            cookie_cutter.creator.as_ref(), 
+            cookie_cutter.treasury_mint.as_ref()
         ], 
-        bump = gay_dungeon.bump,
+        bump = cookie_cutter.bump,
         has_one = authority, 
-        has_one = gay_dungeon_fee_account
+        has_one = cookie_cutter_fee_account
     )]
-    pub gay_dungeon: Box<Account<'info, GayDungeon>>,
+    pub cookie_cutter: Box<Account<'info, CookieCutter>>,
 
     /// CHECK: validate via seeds
     #[account(
         mut,
         seeds = [
             PREFIX.as_bytes(),
-            gay_dungeon.key().as_ref(),
+            cookie_cutter.key().as_ref(),
             FEE_PAYER.as_bytes()
         ],
-        bump = gay_dungeon.fee_payer_bump
+        bump = cookie_cutter.fee_payer_bump
     )]
-    pub gay_dungeon_fee_account :  UncheckedAccount<'info>,
+    pub cookie_cutter_fee_account :  UncheckedAccount<'info>,
 
     #[account(
         init,
         seeds = [
             PREFIX.as_bytes(),
             wallet.key().as_ref(),
-            gay_dungeon.key().as_ref(),
+            cookie_cutter.key().as_ref(),
             token_account.key().as_ref(),
-            gay_dungeon.treasury_mint.as_ref(),
+            cookie_cutter.treasury_mint.as_ref(),
             token_account.mint.as_ref(),
             &buyer_price.to_le_bytes(),
             &token_size.to_le_bytes()
@@ -124,8 +124,8 @@ pub fn sell_logic<'info> (
     let token_account = &ctx.accounts.token_account;
     let metadata_account = &ctx.accounts.metadata_account;
     let authority = &ctx.accounts.authority;
-    let gay_dungeon = &ctx.accounts.gay_dungeon;
-    let gay_dungeon_fee_account = &ctx.accounts.gay_dungeon_fee_account;
+    let cookie_cutter = &ctx.accounts.cookie_cutter;
+    let cookie_cutter_fee_account = &ctx.accounts.cookie_cutter_fee_account;
     let seller_trade_state = &mut ctx.accounts.seller_trade_state;
     let token_program = &ctx.accounts.token_program;
     let system_program = &ctx.accounts.system_program;

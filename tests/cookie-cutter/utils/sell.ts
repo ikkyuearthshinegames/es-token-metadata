@@ -7,28 +7,28 @@ import {
 } from "../../es-token-metadata/utils/account";
 import {
   addSOLToWallet,
-  getGayDungeonProgramAsSigner,
-  getGayDungeonTradeState,
-  loadGayDungeonProgram,
+  getCookieCutterProgramAsSigner,
+  getCookieCutterTradeState,
+  loadCookieCutterProgram,
 } from "./account";
 import {
-  GayDungeonObject,
-  SellGayDungeonAccountArgs,
-  SellGayDungeonArgs,
-  SellGayDungeonRPCArgs,
+  CookieCutterObject,
+  SellCookieCutterAccountArgs,
+  SellCookieCutterArgs,
+  SellCookieCutterRPCArgs,
 } from "./interfaces";
 import { getPriceWithMantissa } from "./misc";
 
-export const sell = async (args: SellGayDungeonArgs) => {
+export const sell = async (args: SellCookieCutterArgs) => {
   const {
     buyPrice,
     env,
-    gayDungeonKey,
-    gayDungeonSigns,
+    cookieCutterKey,
+    cookieCutterSigns,
     mintKey,
     tokenSize,
     walletKeypair,
-  }: SellGayDungeonArgs = args;
+  }: SellCookieCutterArgs = args;
 
   console.log(
     "[sell] || walletKeypair => ",
@@ -37,25 +37,25 @@ export const sell = async (args: SellGayDungeonArgs) => {
 
   //await addSOLToWallet(walletKeypair);
 
-  const gayDungeonProgram = await loadGayDungeonProgram(walletKeypair, env);
+  const cookieCutterProgram = await loadCookieCutterProgram(walletKeypair, env);
   console.log(
-    "[sell] || gayDungeonProgram => ",
-    gayDungeonProgram.programId.toBase58()
+    "[sell] || cookieCutterProgram => ",
+    cookieCutterProgram.programId.toBase58()
   );
 
-  const gayDungeonObj: GayDungeonObject =
-    (await gayDungeonProgram.account.gayDungeon.fetchNullable(
-      gayDungeonKey
-    )) as GayDungeonObject;
+  const cookieCutterObj: CookieCutterObject =
+    (await cookieCutterProgram.account.cookieCutter.fetchNullable(
+      cookieCutterKey
+    )) as CookieCutterObject;
 
-  if (gayDungeonObj === null)
+  if (cookieCutterObj === null)
     throw new Error("auction house account not found");
 
   const priceFromBuyPrice = await getPriceWithMantissa(
     buyPrice,
     mintKey,
     walletKeypair,
-    gayDungeonProgram
+    cookieCutterProgram
   );
 
   const buyPriceAdjusted = new BN(priceFromBuyPrice);
@@ -66,7 +66,7 @@ export const sell = async (args: SellGayDungeonArgs) => {
     tokenSize,
     mintKey,
     walletKeypair,
-    gayDungeonProgram
+    cookieCutterProgram
   );
 
   const tokenSizeAdjusted = new BN(priceFromTokenSize);
@@ -79,7 +79,7 @@ export const sell = async (args: SellGayDungeonArgs) => {
   console.log("[sell] || tokenAccountKey => ", tokenAccountKey.toBase58());
 
   const [programAsSigner, programAsSignerBump] =
-    await getGayDungeonProgramAsSigner();
+    await getCookieCutterProgramAsSigner();
 
   console.log(
     "[sell] || programAsSigner => ",
@@ -89,21 +89,21 @@ export const sell = async (args: SellGayDungeonArgs) => {
   );
 
   console.log("[sell] || tradestate seeds => ", {
-    auctionHouse: gayDungeonKey,
+    auctionHouse: cookieCutterKey,
     wallet: walletKeypair.publicKey,
     tokenAccount: tokenAccountKey,
-    treasuryMint: gayDungeonObj.treasuryMint,
+    treasuryMint: cookieCutterObj.treasuryMint,
     tokenMint: mintKey,
     tokenSize: tokenSizeAdjusted,
     buyPrice: buyPriceAdjusted,
   });
 
   const [sellerTradeState, sellerTradeStateBump] =
-    await getGayDungeonTradeState({
-      gayDungeonKey: gayDungeonKey,
+    await getCookieCutterTradeState({
+      cookieCutterKey: cookieCutterKey,
       walletKey: walletKeypair.publicKey,
       tokenAccount: tokenAccountKey,
-      treasuryMint: gayDungeonObj.treasuryMint,
+      treasuryMint: cookieCutterObj.treasuryMint,
       tokenMint: mintKey,
       tokenSize: tokenSizeAdjusted,
       buyPrice: buyPriceAdjusted,
@@ -136,7 +136,7 @@ export const sell = async (args: SellGayDungeonArgs) => {
     esTokenMetaDataBump
   );
 
-  const sellArgs: SellGayDungeonRPCArgs = {
+  const sellArgs: SellCookieCutterRPCArgs = {
     metadataBump: esTokenMetaDataBump,
     programAsSignerBump: programAsSignerBump,
     buyerPrice: buyPriceAdjusted,
@@ -145,11 +145,11 @@ export const sell = async (args: SellGayDungeonArgs) => {
 
   console.log("[sell] || sellArgs => ", sellArgs);
 
-  const sellAccount: SellGayDungeonAccountArgs = {
-    authority: gayDungeonObj.authority,
-    gayDungeon: gayDungeonKey,
+  const sellAccount: SellCookieCutterAccountArgs = {
+    authority: cookieCutterObj.authority,
+    cookieCutter: cookieCutterKey,
     metadataAccount: esTokenMetaDataKey,
-    gayDungeonFeeAccount: gayDungeonObj.gayDungeonFeeAccount,
+    cookieCutterFeeAccount: cookieCutterObj.cookieCutterFeeAccount,
     rent: anchor.web3.SYSVAR_RENT_PUBKEY,
     sellerTradeState: sellerTradeState,
     systemProgram: anchor.web3.SystemProgram.programId,
@@ -161,7 +161,7 @@ export const sell = async (args: SellGayDungeonArgs) => {
 
   console.log("[sell] || sellAccount => ", sellAccount);
 
-  const tx = await gayDungeonProgram.methods
+  const tx = await cookieCutterProgram.methods
     .sell(
       esTokenMetaDataBump,
       programAsSignerBump,

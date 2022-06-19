@@ -1,14 +1,14 @@
 import { AnchorProvider, web3 } from "@project-serum/anchor";
 import { PublicKey, clusterApiUrl, Keypair } from "@solana/web3.js";
 
-export const GAY_DUNGEON = "gay_dungeon";
+export const COOKIE_CUTTER = "cookie_cutter";
 export const FEE_PAYER = "fee_payer";
 export const TREASURY = "treasury";
 export const SIGNER = "signer";
 export const METADATA = "metadata";
 
-export const GAY_DUNGEON_PROGRAM_ID = new PublicKey(
-  "Bz4repUbACRtNKsrTZUhgfNzXKbsu6JcLzawHFqoSz3X"
+export const COOKIE_CUTTER_PROGRAM_ID = new PublicKey(
+  "5ZCWy1KnjskpikJGTrbRVNLw6pyRmS1GjbQfqwwqgG5X"
 );
 
 export const WRAPPED_SOL_MINT = new PublicKey(

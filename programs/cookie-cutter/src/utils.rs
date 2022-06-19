@@ -165,7 +165,7 @@ pub fn make_ata<'info>(
 
 pub fn assert_owned_by(account: &AccountInfo, owner: &Pubkey) -> Result<()> {
     if account.owner != owner {
-        return err!(GayDungeonError::IncorrectOwner);
+        return err!(CookieCutterError::IncorrectOwner);
     } else {
         Ok(())
     }
@@ -175,7 +175,7 @@ pub fn assert_keys_equal(key1: Pubkey, key2: Pubkey) -> Result<()> {
     if sol_memcmp(key1.as_ref(), key2.as_ref(), PUBKEY_BYTES) == 0 {
         Ok(())
     } else {
-        return err!(GayDungeonError::NotEqualKey);
+        return err!(CookieCutterError::NotEqualKey);
     }
 }
 
@@ -196,6 +196,6 @@ pub fn assert_initialized<T: Pack + IsInitialized>(account_info: &AccountInfo) -
     if account.is_initialized() {
         Ok(account)
     } else {
-        err!(GayDungeonError::UninitializedAccount)
+        err!(CookieCutterError::UninitializedAccount)
     }
 }

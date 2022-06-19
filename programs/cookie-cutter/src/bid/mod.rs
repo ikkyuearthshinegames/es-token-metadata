@@ -46,7 +46,7 @@ pub struct Bid<'info> {
         init, 
         seeds = [
             PREFIX.as_bytes(), 
-            gay_dungeon.key().as_ref(), 
+            cookie_cutter.key().as_ref(), 
             wallet.key().as_ref()
             ], 
         bump,
@@ -62,7 +62,7 @@ pub struct Bid<'info> {
         seeds = [
             PREFIX.as_bytes(),
             wallet.key().as_ref(),
-            gay_dungeon.key().as_ref(),
+            cookie_cutter.key().as_ref(),
             token_account.key().as_ref(),
             treasury_mint.key().as_ref(),
             token_account.mint.as_ref(),
@@ -81,26 +81,26 @@ pub struct Bid<'info> {
         mut,
         seeds = [
             PREFIX.as_bytes(), 
-            gay_dungeon.creator.as_ref(), 
-            gay_dungeon.treasury_mint.as_ref()
+            cookie_cutter.creator.as_ref(), 
+            cookie_cutter.treasury_mint.as_ref()
         ], 
-        bump = gay_dungeon.bump,
+        bump = cookie_cutter.bump,
         has_one = authority, 
-        has_one = gay_dungeon_fee_account
+        has_one = cookie_cutter_fee_account
     )]
-    pub gay_dungeon: Box<Account<'info, GayDungeon>>,
+    pub cookie_cutter: Box<Account<'info, CookieCutter>>,
 
      /// CHECK: validate via seeds
      #[account(
         mut,
         seeds = [
             PREFIX.as_bytes(),
-            gay_dungeon.key().as_ref(),
+            cookie_cutter.key().as_ref(),
             FEE_PAYER.as_bytes()
         ],
-        bump = gay_dungeon.fee_payer_bump
+        bump = cookie_cutter.fee_payer_bump
     )]
-    pub gay_dungeon_fee_account :  UncheckedAccount<'info>,
+    pub cookie_cutter_fee_account :  UncheckedAccount<'info>,
 
     pub token_program: Program<'info, Token>,
     pub system_program: Program<'info, System>,
@@ -128,7 +128,7 @@ pub fn bid_logic <'info> (
     //NOTE:  extract variables from ctx
     let wallet = &ctx.accounts.wallet;
     let token_account = & ctx.accounts.token_account;
-    let gay_dungeon = &mut ctx.accounts.gay_dungeon;
+    let cookie_cutter = &mut ctx.accounts.cookie_cutter;
     let escrow_payment_account = & ctx.accounts.escrow_payment_account;
     let buyer_trade_state = &mut ctx.accounts.buyer_trade_state;
     let treasury_mint = &ctx.accounts.treasury_mint;
@@ -142,21 +142,21 @@ pub fn bid_logic <'info> (
     buyer_trade_state.ata = token_account.key();
 
 
-    // NOTE: add escrow_payment_account_bump to gay_dungeon
-    gay_dungeon.escrow_payment_bump = escrow_payment_bump;
+    // NOTE: add escrow_payment_account_bump to cookie_cutter
+    cookie_cutter.escrow_payment_bump = escrow_payment_bump;
 
     // NOTE:  check for duble bidding and transfer lamports to escrow account
     let is_native = treasury_mint.key() == spl_token::native_mint::id();
 
     if is_native {
-        let total_lamport_required = buyer_price.checked_add(rent.minimum_balance((escrow_payment_account.data_len()))).ok_or(GayDungeonError::NumericalOverflow)?;
+        let total_lamport_required = buyer_price.checked_add(rent.minimum_balance((escrow_payment_account.data_len()))).ok_or(CookieCutterError::NumericalOverflow)?;
 
         if escrow_payment_account.lamports() < total_lamport_required {
             let diff = buyer_price
                 .checked_add(rent.minimum_balance(escrow_payment_account.data_len()))
-                .ok_or(GayDungeonError::NumericalOverflow)?
+                .ok_or(CookieCutterError::NumericalOverflow)?
                 .checked_sub(escrow_payment_account.lamports())
-                .ok_or(GayDungeonError::NumericalOverflow)?;
+                .ok_or(CookieCutterError::NumericalOverflow)?;
 
             invoke(
                 &system_instruction::transfer(
