@@ -1,3 +1,4 @@
+#![allow(warnings)]
 pub mod constants;
 pub mod errors;
 pub mod process;
@@ -30,4 +31,17 @@ pub mod es_token_metadata {
     pub fn update_metadata(ctx: Context<UpdateMetadata>, args: UpdateMetadataArgs) -> Result<()> {
         process_update_metadata(ctx, args)
     }
+
+    pub fn get_metadata(ctx: Context<GetMetadata>) -> Result<Metadata> {
+        let metadata = &ctx.accounts.metadata;
+        let _metadata = Metadata{
+            mint:  metadata.mint,
+            update_authority: metadata.update_authority,
+            data: metadata.data.clone(),
+            is_mutable: metadata.is_mutable
+        };
+
+        Ok(_metadata)
+    }
 }
+

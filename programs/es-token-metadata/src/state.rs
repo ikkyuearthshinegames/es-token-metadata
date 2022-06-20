@@ -144,3 +144,10 @@ pub struct Creator {
 pub struct Referrer {
     pub address: Pubkey,
 }
+
+
+#[derive(Accounts)]
+pub struct GetMetadata<'info> {
+    #[account(mut)]
+    pub metadata: Account<'info, Metadata>,
+}

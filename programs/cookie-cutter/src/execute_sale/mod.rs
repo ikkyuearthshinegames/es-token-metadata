@@ -247,6 +247,7 @@ pub fn execute_sale_logic<'info>(
     // TODO: pay the creators the fee
 
 
+
     // TODO: pay the house 
 
     // TODO: pay the remaining lamport to the 
